@@ -1,0 +1,123 @@
+/* ===== 会員登録（既存レイアウトを完全再現：絶対配置） ===== */
+
+/* 画面キャンバス（1512×982、中央寄せ） */
+/* 画面キャンバス */
+.register-page {
+  position: relative;
+  width: 100%;
+  min-height: 982px;
+  background: #FFFFFF;
+}
+
+.register-stage {
+  position: relative;
+  width: 1512px;
+  height: 982px;
+  margin: 0 auto; /* 中央寄せのみ */
+  background: #FFFFFF;
+}
+
+/* タイトル */
+.reg-title {
+  position: absolute;
+  width: 144px;
+  height: 44px;
+  left: calc(50% - 144px / 2);
+  top: calc(50% - 44px / 2 - 308px);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 44px;
+  color: #000000;
+  margin: 0;
+}
+
+/* ラベル */
+.label-name, .label-email, .label-password, .label-password-confirm {
+  position: absolute;
+  width: 205px;
+  height: 36px;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  color: #000000;
+}
+.label-name { left: 416px; top: 250px; }
+.label-email { left: 416px; top: 364px; }
+.label-password { left: 416px; top: 495px; }
+.label-password-confirm { left: 416px; top: 622px; }
+
+/* 入力 */
+.input-name, .input-email, .input-password, .input-password-confirm {
+  box-sizing: border-box;
+  position: absolute;
+  width: 680px;
+  height: 45px;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 16px;
+}
+.input-name { left: 416px; top: 286px; }
+.input-email { left: 416px; top: 400px; }
+.input-password { left: 416px; top: 531px; }
+.input-password-confirm { left: 416px; top: 658px; }
+
+/* エラー（必要なら座標微調整） */
+.err-name { position: absolute; left: 416px; top: 337px; }
+.err-email { position: absolute; left: 416px; top: 451px; }
+.err-password { position: absolute; left: 416px; top: 582px; }
+.err-password-confirm { position: absolute; left: 416px; top: 709px; }
+
+/* ボタン */
+.btn-submit {
+  position: absolute;
+  width: 680px;
+  height: 60px;
+  left: 416px;
+  top: 796px;
+  background: #000000;
+  border-radius: 5px;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 31px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+/* ログイン導線 */
+.login-nav {
+  position: absolute;
+  width: 257px;
+  height: 49px;
+  left: 616px;
+  top: 873px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-link {
+  font-size: 20px;
+  color: #0073CC;
+  text-decoration: none;
+}
+
+/* ========== Responsive (PC：1400-1540px) ========== */
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .register-page {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .register-stage {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
