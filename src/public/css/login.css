@@ -1,0 +1,146 @@
+/* ===== ログイン画面 ===== */
+.auth {
+  position: relative;
+  width: 100%;
+  max-width: 1512px;
+  min-height: calc(100vh - 80px);
+  margin: 0 auto;
+  padding: 120px 24px 160px;
+  display: flex;
+  justify-content: center;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.auth__body {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.auth__title {
+  margin: 0 0 48px;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 44px;
+  color: #000000;
+  text-align: center;
+}
+
+.auth__form {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 32px;
+}
+
+.form__group:last-of-type {
+  margin-bottom: 105px;
+}
+
+.form__label {
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  color: #000000;
+}
+
+.form__input {
+  width: 100%;
+  height: 60px;
+  padding: 0 16px;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  font-size: 18px;
+  line-height: 1.4;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form__input:focus {
+  outline: none;
+  border-color: #0073CC;
+  box-shadow: 0 0 0 3px rgba(0, 115, 204, 0.25);
+}
+
+.form__error {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #d32f2f;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  border: none;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn--primary {
+  width: 100%;
+  min-height: 60px;
+  background: #000000;
+  color: #FFFFFF;
+  font-size: 26px;
+  line-height: 31px;
+}
+
+.btn--primary:hover {
+  background: #1a1a1a;
+}
+
+.btn--primary:active {
+  background: #000000;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.btn--primary:disabled {
+  background: #4d4d4d;
+  color: #E0E0E0;
+  cursor: not-allowed;
+}
+
+.auth__link {
+  margin-top: 28px;
+  font-size: 20px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.link {
+  color: #0073CC;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link:hover,
+.link:focus {
+  color: #005fa3;
+  text-decoration: underline;
+  outline: none;
+}
+
+/* ===== Responsive ===== */
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+  .auth {
+    max-width: 1512px;
+  }
+}
+

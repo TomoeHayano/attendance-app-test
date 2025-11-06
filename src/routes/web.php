@@ -1,7 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminLoginController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController as UserLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +21,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 Route::middleware('guest')->group(function (): void {
     Route::get('/register', [RegisteredUserController::class, 'create'])
         ->name('register');        // 会員登録フォーム表示（FN004でログインへ導線）
+
     Route::post('/register', [RegisteredUserController::class, 'store'])
         ->name('register.post');   // 新規会員登録
 });
@@ -25,3 +30,51 @@ Route::middleware('guest')->group(function (): void {
 Route::middleware('auth')->get('/attendance/clock', function (): \Illuminate\View\View {
     return view('attendance.clock'); // 仮ビュー。後で本実装へ差し替え
 })->name('attendance.clock');
+
+Route::middleware(['guest:web'])->group(function (): void {
+    Route::get('/login', [UserLoginController::class, 'create'])->name('login');
+    Route::post('/login', [UserLoginController::class, 'store']);
+});
+
+// ログイン後エリア（例：ダッシュボードは verified 必須）
+Route::middleware(['auth:web', 'verified'])->group(function (): void {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
+
+// === メール認証（一般ユーザー） ===
+// 誘導画面
+// Route::get('/email/verify', function () {
+//     return view('auth.verify');
+// })->middleware('auth:web')->name('verification.notice');
+
+// // 認証リンクの処理（署名付きURL）
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+//     return redirect()->route('dashboard');
+// })->middleware(['auth:web', 'signed'])->name('verification.verify');
+
+// // 再送ボタン
+// Route::post('/email/verification-notification', function (Request $request) {
+//     $request->user()->sendEmailVerificationNotification();
+//     return back()->with('status', 'verification-link-sent');
+// })->middleware(['auth:web', 'throttle:6,1'])->name('verification.send');
+
+// === 管理者用（ログイン表示/処理） ===
+Route::prefix('admin')->name('admin.')->group(function (): void {
+    Route::middleware(['guest:admin'])->group(function (): void {
+        Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
+        Route::post('/login', [AdminLoginController::class, 'store']);
+    });
+
+    Route::middleware(['auth:admin'])->group(function (): void {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
+    });
+});
+
+// ログアウト（両者）
+Route::post('/logout', [UserLoginController::class, 'destroy'])->name('logout');
+Route::post('/admin/logout', [AdminLoginController::class, 'destroy'])->name('admin.logout');
