@@ -104,56 +104,56 @@
 
 /* ========== Responsive (PC：1400-1540px) ========== */
 @media screen and (min-width: 1400px) and (max-width: 1540px) {
-  .attendance {
-    width: 1512px;
-    height: 982px;
-    padding: 0;
-    display: block;
-  }
+    .attendance {
+      width: 1512px;
+      height: 982px;
+      padding: 0;
+      display: block;
+    }
 
-  .status__pill {
-    position: absolute;
-    left: 706px;
-    top: 289px;
-  }
+    .status__pill {
+      position: absolute;
+      left: 706px;
+      top: 289px;
+    }
 
-  .datetime__date {
-    position: absolute;
-    left: 590px;
-    top: 361px;
-    width: 332px;
-    height: 48px;
-  }
+    .datetime__date {
+      position: absolute;
+      left: 590px;
+      top: 361px;
+      width: 332px;
+      height: 48px;
+    }
 
-  .datetime__time {
-    position: absolute;
-    left: 635px;
-    top: 441px;
-    width: 242px;
-    height: 97px;
-    margin: 0;
-  }
+    .datetime__time {
+      position: absolute;
+      left: 635px;
+      top: 441px;
+      width: 242px;
+      height: 97px;
+      margin: 0;
+    }
 
-  .actions__grid {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 625px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    gap: 82px;
-    width: auto;
-  }
+    .actions__grid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 625px;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      gap: 82px;
+      width: auto;
+    }
 
-  .action-form { width: auto; }
-  .btn { width: 221px; }
+    .action-form { width: auto; }
+    .btn { width: 221px; }
 
-  .actions__message {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 720px;
-    margin-top: 0;
-  }
+    .actions__message {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 720px;
+      margin-top: 0;
+    }
 }

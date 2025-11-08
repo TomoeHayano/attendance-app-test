@@ -16,7 +16,9 @@ class BreakRecord extends Model
     protected $table = 'break_records';
 
     protected $fillable = [
-        'attendance_id', 'break_start', 'break_end',
+        'attendance_id',
+        'break_start',
+        'break_end',
     ];
 
     public function attendance(): BelongsTo

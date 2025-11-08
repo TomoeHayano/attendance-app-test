@@ -18,7 +18,11 @@ class Attendance extends Model
     protected $table = 'attendances';
 
     protected $fillable = [
-        'user_id', 'date', 'clock_in', 'clock_out', 'status',
+        'user_id',
+        'date',
+        'clock_in',
+        'clock_out',
+        'status',
     ];
 
     protected $casts = [
@@ -32,7 +36,7 @@ class Attendance extends Model
     public const STATUS_ON_BREAK   = 2; // 休憩中
     public const STATUS_CLOCKED_OUT= 3; // 退勤済
 
-    public function breaks(): HasMany
+    public function breakRecords(): HasMany
     {
         return $this->hasMany(BreakRecord::class, 'attendance_id');
     }

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AttendanceListController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,6 +45,11 @@ Route::middleware(['auth:web'])->group(function (): void {
     Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])->name('attendance.breakStart');
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])->name('attendance.breakEnd');
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clockOut');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/attendance/list', [AttendanceListController::class, 'index'])
+        ->name('attendance.list');
 });
 
 // === メール認証（一般ユーザー） ===

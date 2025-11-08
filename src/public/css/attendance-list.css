@@ -1,0 +1,205 @@
+/* 画面全体 */
+.attendance-list {
+    min-height: 100vh;
+    background: #F0EFF2;
+}
+
+.attendance-list__inner {
+    max-width: 1512px;
+    margin: 0 auto;
+    padding: 120px 57px 114px;
+    box-sizing: border-box;
+}
+
+/* タイトル */
+.attendance-list__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 47px;
+}
+
+.attendance-list__title-line {
+    display: inline-block;
+    width: 8px;
+    height: 36px;
+    background: #000000;
+}
+
+.attendance-list__title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000000;
+}
+
+/* 月ナビゲーションの枠（Rectangle 24） */
+.attendance-list__month-bar {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 47px;
+}
+
+.attendance-list__month-inner {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    height: 60px;
+    padding: 0 21.22px 0 25px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-sizing: border-box;
+    gap: 24px;
+}
+
+/* 前月・翌月ボタン */
+.attendance-list__month-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+}
+.attendance-list__month-nav--prev { margin-right: auto; }
+.attendance-list__month-nav--next { margin-left: auto; }
+
+.attendance-list__month-nav--disabled {
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.5;
+    padding: 0;
+}
+
+.attendance-list__month-arrow {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.attendance-list__month-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #737373;
+}
+
+.attendance-list__month-nav--next {
+    padding-right: 0;
+}
+
+/* 当月（カレンダーアイコン + yyyy/MM） */
+.attendance-list__month-current {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.attendance-list__month-calendar {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.attendance-list__month-label {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+}
+
+/* 一覧カード（Rectangle 32） */
+.attendance-list__card {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.attendance-list__table-wrap {
+    width: 100%;
+    max-width: 900px;
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 15px 0 114px;
+    box-sizing: border-box;
+}
+
+/* テーブル */
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.attendance-table__row {
+    height: 60px;
+}
+
+.attendance-table__col--date { width: 154px; }
+.attendance-table__col--time { width: 98px; }
+.attendance-table__col--detail { width: 120px; }
+
+.attendance-table__body .attendance-table__cell {
+    text-align: center;
+}
+
+/* ヘッダー行（Group 21 + Line 1） */
+.attendance-table__head {
+    border-bottom: 3px solid #E1E1E1;
+}
+
+.attendance-table__head th {
+    padding: 8px 0 12px;
+    text-align: center;
+    box-sizing: border-box;
+}
+/* 各セル共通 */
+.attendance-table__cell {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #737373;
+    text-align: center;
+    padding: 8px 4px;
+    border-bottom: 2px solid #E1E1E1;
+    vertical-align: middle;
+    box-sizing: border-box;
+}
+
+.attendance-table th:first-child,
+.attendance-table td:first-child {
+    text-align: left;
+    padding-left: 57px;
+}
+
+.attendance-table th:last-child,
+.attendance-table td:last-child {
+    text-align: right;
+    padding-right: 87px;
+}
+
+/* 詳細テキスト */
+.attendance-table__detail-text {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #000000;
+}
+
+/* 空データ時 */
+.attendance-table__cell--empty {
+    text-align: center;
+    padding: 24px 0;
+    font-weight: 400;
+    letter-spacing: normal;
+}
+
+/* ========== Responsive (PC：1400-1540px) ========== */
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .attendance-list__inner {
+        padding-top: 96px;
+    }
+
+    .attendance-list__table-wrap,
+    .attendance-list__month-inner {
+        width: 900px;
+    }
+}
