@@ -38,13 +38,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // メール未認証 → 誘導画面へ
-        $user = Auth::guard('web')->user();
-        if (method_exists($user, 'hasVerifiedEmail') && ! $user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
-        }
-
-        return Redirect::intended(route('dashboard'));
+        return redirect()->intended(route('attendance.index'));
     }
 
     /**

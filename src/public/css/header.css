@@ -1,0 +1,56 @@
+.site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    height: 80px;                 /* Group 66 */
+    background: var(--color-black); /* Rectangle 16 */
+    z-index: 100;
+}
+
+.site-header__inner {
+    max-width: 1512px;
+    height: 80px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 0 24px;
+}
+
+/* ロゴ（CoachTech_White） */
+.site-header__brand {
+    font-weight: 700;
+    color: var(--color-white);
+    line-height: 1;
+}
+
+/* ナビ */
+.site-header__nav .nav-list {
+    display: flex;
+    gap: 48px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.site-header__nav .nav-list a {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    color: var(--color-white);
+    font-weight: 700;
+    font-size: 24px;   /* Figma数値 */
+    line-height: 29px; /* Figma数値 */
+    text-decoration: none;
+}
+
+.site-header__nav .nav-list a.is-active {
+    text-decoration: underline;
+}
+
+/* ========== Responsive (PC：1400-1540px) ========== */
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+  :root {
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+  }
+}

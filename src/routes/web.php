@@ -6,7 +6,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AttendanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -36,11 +36,13 @@ Route::middleware(['guest:web'])->group(function (): void {
     Route::post('/login', [UserLoginController::class, 'store']);
 });
 
-// ログイン後エリア（例：ダッシュボードは verified 必須）
-Route::middleware(['auth:web', 'verified'])->group(function (): void {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+ // ログイン後のメイン画面を勤怠打刻画面に変更（FN006）
+Route::middleware(['auth:web'])->group(function (): void {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clockIn');
+    Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])->name('attendance.breakStart');
+    Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])->name('attendance.breakEnd');
+    Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clockOut');
 });
 
 // === メール認証（一般ユーザー） ===
