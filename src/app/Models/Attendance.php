@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
  * @property int $user_id
- * @property string $date           // Y-m-d
- * @property string|null $clock_in  // H:i:s
- * @property string|null $clock_out // H:i:s
+ * @property string $date
+ * @property string|null $clock_in
+ * @property string|null $clock_out
  * @property int $status            // 0:勤務外,1:出勤中,2:休憩中,3:退勤済
+ * @property-read User $user
  */
 class Attendance extends Model
 {
@@ -39,6 +42,21 @@ class Attendance extends Model
     public function breakRecords(): HasMany
     {
         return $this->hasMany(BreakRecord::class, 'attendance_id');
+    }
+
+    public function correctionRequests(): HasMany
+    {
+        return $this->hasMany(CorrectionRequest::class, 'attendance_id');
+    }
+
+    /**
+     * 勤怠に紐づくユーザー
+     *
+     * @return BelongsTo<User, Attendance>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function statusLabel(): string

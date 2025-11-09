@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,59 +44,54 @@ class AttendanceListController extends Controller
             ->whereYear(self::DATE_COLUMN, $targetDate->year)
             ->whereMonth(self::DATE_COLUMN, $targetDate->month)
             ->orderBy(self::DATE_COLUMN)
-            ->get();
+            ->get()
+            ->keyBy(function (Attendance $attendance): string {
+                $date = $attendance->{self::DATE_COLUMN};
 
-        // Bladeで扱いやすい形に変換（文字列に整形）
-        $attendanceRows = $attendances->map(function (Attendance $attendance): array {
-            $date = $attendance->{self::DATE_COLUMN};
+                if (! $date instanceof Carbon) {
+                    $date = Carbon::parse((string) $date);
+                }
 
-            // date カラムが cast されていない場合に備えて保険
-            if (! $date instanceof Carbon) {
-                $date = Carbon::parse((string) $date);
-            }
+                return $date->toDateString();
+            });
 
-            $clockIn  = $this->normalizeToMinute($this->parseTime($attendance->clock_in));
-            $clockOut = $this->normalizeToMinute($this->parseTime($attendance->clock_out));
+        $monthPeriod = CarbonPeriod::create(
+            $targetDate->copy()->startOfMonth(),
+            $targetDate->copy()->endOfMonth()
+        );
 
-            $breakMinutes   = $this->calculateBreakMinutes($attendance);
-            $workingMinutes = $this->calculateWorkingMinutes($clockIn, $clockOut, $breakMinutes);
+        $attendanceRows = collect();
 
-            return [
-                'id'             => $attendance->id,
-                'date'           => $date,
-                'date_label'     => $this->formatJapaneseDate($date),
-                'clock_in'       => $clockIn ? $clockIn->format('H:i') : '',
-                'clock_out'      => $clockOut ? $clockOut->format('H:i') : '',
-                'break_time'     => $this->formatMinutes($breakMinutes),
-                'working_time'   => $this->formatMinutes($workingMinutes),
-            ];
-        });
+        foreach ($monthPeriod as $date) {
+            $key        = $date->toDateString();
+            $attendance = $attendances->get($key);
+
+            $clockInCarbon  = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_in)) : null;
+            $clockOutCarbon = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_out)) : null;
+
+            $breakMinutes   = $attendance ? $this->calculateBreakMinutes($attendance) : 0;
+            $workingMinutes = $attendance ? $this->calculateWorkingMinutes($clockInCarbon, $clockOutCarbon, $breakMinutes) : 0;
+
+            $attendanceRows->push([
+                'date'         => $date,
+                'date_label'   => $this->formatJapaneseDate($date),
+                'clock_in'     => $clockInCarbon ? $clockInCarbon->format('H:i') : '',
+                'clock_out'    => $clockOutCarbon ? $clockOutCarbon->format('H:i') : '',
+                'break_time'   => $attendance ? $this->formatMinutes($breakMinutes) : '',
+                'working_time' => $attendance ? $this->formatMinutes($workingMinutes) : '',
+                'detail_id'    => $attendance?->id ?? $key,
+            ]);
+        }
 
         // 前月・翌月
         $prevMonthDate = $targetDate->copy()->subMonthNoOverflow();
         $nextMonthDate = $targetDate->copy()->addMonthNoOverflow();
-
-        // 前月にデータがあるか
-        $hasPrevMonth = Attendance::query()
-            ->where('user_id', $userId)
-            ->whereYear(self::DATE_COLUMN, $prevMonthDate->year)
-            ->whereMonth(self::DATE_COLUMN, $prevMonthDate->month)
-            ->exists();
-
-        // 翌月にデータがあるか
-        $hasNextMonth = Attendance::query()
-            ->where('user_id', $userId)
-            ->whereYear(self::DATE_COLUMN, $nextMonthDate->year)
-            ->whereMonth(self::DATE_COLUMN, $nextMonthDate->month)
-            ->exists();
 
         return view('attendance.list', [
             'attendanceRows' => $attendanceRows,
             'targetDate'     => $targetDate,
             'prevMonthDate'  => $prevMonthDate,
             'nextMonthDate'  => $nextMonthDate,
-            'hasPrevMonth'   => $hasPrevMonth,
-            'hasNextMonth'   => $hasNextMonth,
         ]);
     }
 

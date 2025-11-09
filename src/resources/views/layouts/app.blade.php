@@ -6,7 +6,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @yield('css') 
 </head>
-<body>
+<body class="@yield('body_class', '')">
 <header class="global-header">
     <div class="header-inner">
         <img src="{{ asset('storage/images/coachtech_white.png') }}" alt="COACHTECH" class="header-logo">
@@ -16,5 +16,7 @@
 <main class="page-wrap">
     @yield('content')
 </main>
+
+@stack('scripts')
 </body>
 </html>

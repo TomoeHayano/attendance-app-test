@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         $attendance = Attendance::query()
             ->where('user_id', $request->user()->id)
             ->whereDate('date', $todayDate)
-            ->with('breaks')
+            ->with('breakRecords')
             ->first();
 
         $statusLabel = $attendance?->statusLabel() ?? '勤務外';
@@ -55,7 +55,7 @@ class AttendanceController extends Controller
                 ->exists();
 
             if ($alreadyExists) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '本日は既に出勤済みです。']);
             }
 
@@ -66,7 +66,7 @@ class AttendanceController extends Controller
                 'status'   => Attendance::STATUS_WORKING,
             ]);
 
-            return redirect()->route('attendance.index');
+            return redirect()->route('attendance.action');
         });
     }
 
@@ -86,7 +86,7 @@ class AttendanceController extends Controller
                 ->first();
 
             if ($attendance === null || $attendance->status !== Attendance::STATUS_WORKING) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '休憩入は出勤中のみ可能です。']);
             }
 
@@ -97,7 +97,7 @@ class AttendanceController extends Controller
 
             $attendance->update(['status' => Attendance::STATUS_ON_BREAK]);
 
-            return redirect()->route('attendance.index');
+            return redirect()->route('attendance.action');
         });
     }
 
@@ -117,7 +117,7 @@ class AttendanceController extends Controller
                 ->first();
 
             if ($attendance === null || $attendance->status !== Attendance::STATUS_ON_BREAK) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '休憩戻は休憩中のみ可能です。']);
             }
 
@@ -127,14 +127,14 @@ class AttendanceController extends Controller
                 ->first();
 
             if ($latestBreak === null) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '未終了の休憩が見つかりません。']);
             }
 
             $latestBreak->update(['break_end' => $currentTime]);
             $attendance->update(['status' => Attendance::STATUS_WORKING]);
 
-            return redirect()->route('attendance.index');
+            return redirect()->route('attendance.action');
         });
     }
 
@@ -154,12 +154,12 @@ class AttendanceController extends Controller
                 ->first();
 
             if ($attendance === null) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '本日は未出勤です。']);
             }
 
             if ($attendance->status === Attendance::STATUS_CLOCKED_OUT) {
-                return redirect()->route('attendance.index')
+                return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '本日は既に退勤済みです。']);
             }
 
@@ -180,7 +180,7 @@ class AttendanceController extends Controller
                 'status'    => Attendance::STATUS_CLOCKED_OUT,
             ]);
 
-            return redirect()->route('attendance.index')
+            return redirect()->route('attendance.action')
                 ->with('clockedOut', 'お疲れ様でした。');
         });
     }

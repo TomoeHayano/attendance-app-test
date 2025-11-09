@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body_class', 'body--plain')
+
 @section('title', '会員登録')
 
 @section('css')

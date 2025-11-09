@@ -1,0 +1,223 @@
+.attendance-detail {
+    position: relative;
+    width: min(100%, 1512px);
+    min-height: 982px;
+    margin: 0 auto;
+    padding: 93px 24px 120px;
+    background: #F0EFF2;
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    color: #000000;
+    box-sizing: border-box;
+}
+
+.attendance-detail__inner {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.attendance-detail__title {
+    position: relative;
+    margin: 0 0 48px;
+    padding-left: 32px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+.attendance-detail__title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 36px;
+    background: #000000;
+    border-radius: 4px;
+}
+
+.attendance-detail__table {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 10px;
+    border-collapse: collapse;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.attendance-detail__table th,
+.attendance-detail__table td {
+    padding: 24px 48px;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 0.15em;
+    font-weight: 700;
+    border-bottom: 2px solid #E1E1E1;
+    vertical-align: top;
+}
+
+.attendance-detail__table tr:last-child th,
+.attendance-detail__table tr:last-child td {
+    border-bottom: none;
+}
+
+.attendance-detail__table th {
+    width: 30%;
+    color: #737373;
+    text-align: left;
+}
+
+.attendance-detail__table td {
+    width: 70%;
+    color: #000000;
+    padding-right: 120px;
+    box-sizing: border-box;
+}
+
+.attendance-detail__field-group {
+    width: 100%;
+    max-width: 561px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.attendance-detail__field-group--remarks .attendance-detail__remarks {
+    max-width: 316px;
+}
+
+.attendance-detail__date {
+    display: inline-flex;
+    gap: 148px;
+    white-space: nowrap;
+}
+
+.attendance-detail__date-year,
+.attendance-detail__date-day {
+    white-space: nowrap;
+}
+
+.attendance-detail__time-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.attendance-detail__time-row .attendance-detail__time-field + .attendance-detail__time-separator {
+    margin-left: 51px;
+}
+
+.attendance-detail__time-row .attendance-detail__time-separator + .attendance-detail__time-field {
+    margin-left: 54px;
+}
+
+.attendance-detail__time-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.attendance-detail__time-input {
+    width: 103px;
+    height: 28px;
+    border: 1px solid #E1E1E1;
+    border-radius: 4px;
+    padding: 0 12px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.attendance-detail__time-input[readonly] {
+    background: #F8F8F8;
+}
+
+.attendance-detail__time-separator {
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    line-height: 1;
+}
+
+.attendance-detail__remarks {
+    width: 100%;
+    max-width: 316px;
+    min-height: 72px;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    padding: 16px;
+    box-sizing: border-box;
+    font-size: 14px;
+    letter-spacing: 0.15em;
+    line-height: 1.5;
+    resize: none;
+    overflow: hidden;
+}
+
+.attendance-detail__error-list {
+    margin: 0;
+}
+
+.form__error {
+    margin: 0 0 4px;
+    color: #d32f2f;
+    font-size: 13px;
+    letter-spacing: normal;
+    line-height: 1.4;
+}
+
+.form__error:last-child {
+    margin-bottom: 0;
+}
+
+.attendance-detail__footer {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.attendance-detail__submit {
+    width: 130px;
+    height: 50px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+}
+
+.attendance-detail__pending-message {
+    font-size: 14px;
+    letter-spacing: 0.15em;
+}
+
+/* ========== Responsive (PC：1400-1540px) ========== */
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .attendance-detail {
+        width: 1512px;
+        min-height: 982px;
+        padding: 93px 0 160px;
+    }
+
+    .attendance-detail__inner {
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .attendance-detail__title {
+        margin-left: 40px;
+    }
+
+    .attendance-detail__table {
+        margin: 0 auto;
+    }
+
+    .attendance-detail__footer {
+        padding-right: 40px;
+    }
+}

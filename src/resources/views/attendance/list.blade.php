@@ -21,22 +21,13 @@
             <section class="attendance-list__month-bar" aria-label="月選択エリア">
                 <div class="attendance-list__month-inner">
                     {{-- 前月ボタン --}}
-                    @if ($hasPrevMonth)
-                        <a href="{{ route('attendance.list', ['year' => $prevMonthDate->year, 'month' => $prevMonthDate->month]) }}"
-                        class="attendance-list__month-nav attendance-list__month-nav--prev">
-                            <img src="{{ asset('images/左矢印.png') }}"
-                                alt="前月へ"
-                                class="attendance-list__month-arrow">
-                            <span class="attendance-list__month-text">前月</span>
-                        </a>
-                    @else
-                        <div class="attendance-list__month-nav attendance-list__month-nav--disabled attendance-list__month-nav--prev">
-                            <img src="{{ asset('images/左矢印.png') }}"
-                                alt="前月へ"
-                                class="attendance-list__month-arrow">
-                            <span class="attendance-list__month-text">前月</span>
-                        </div>
-                    @endif
+                    <a href="{{ route('attendance.list', ['year' => $prevMonthDate->year, 'month' => $prevMonthDate->month]) }}"
+                       class="attendance-list__month-nav attendance-list__month-nav--prev">
+                        <img src="{{ asset('images/左矢印.png') }}"
+                             alt="前月へ"
+                             class="attendance-list__month-arrow">
+                        <span class="attendance-list__month-text">前月</span>
+                    </a>
 
                     {{-- 当月（表示中の月） --}}
                     <div class="attendance-list__month-current">
@@ -49,22 +40,13 @@
                     </div>
 
                     {{-- 翌月ボタン --}}
-                    @if ($hasNextMonth)
-                        <a href="{{ route('attendance.list', ['year' => $nextMonthDate->year, 'month' => $nextMonthDate->month]) }}"
-                        class="attendance-list__month-nav attendance-list__month-nav--next">
-                            <span class="attendance-list__month-text">翌月</span>
-                            <img src="{{ asset('images/右矢印.png') }}"
-                                alt="翌月へ"
-                                class="attendance-list__month-arrow attendance-list__month-arrow--right">
-                        </a>
-                    @else
-                        <div class="attendance-list__month-nav attendance-list__month-nav--disabled attendance-list__month-nav--next">
-                            <span class="attendance-list__month-text">翌月</span>
-                            <img src="{{ asset('images/右矢印.png') }}"
-                                alt="翌月へ"
-                                class="attendance-list__month-arrow attendance-list__month-arrow--right">
-                        </div>
-                    @endif
+                    <a href="{{ route('attendance.list', ['year' => $nextMonthDate->year, 'month' => $nextMonthDate->month]) }}"
+                       class="attendance-list__month-nav attendance-list__month-nav--next">
+                        <span class="attendance-list__month-text">翌月</span>
+                        <img src="{{ asset('images/右矢印.png') }}"
+                             alt="翌月へ"
+                             class="attendance-list__month-arrow attendance-list__month-arrow--right">
+                    </a>
                 </div>
             </section>
 
@@ -110,7 +92,11 @@
                                         {{ $row['working_time'] }}
                                     </td>
                                     <td class="attendance-table__cell attendance-table__cell--detail">
-                                        <span class="attendance-table__detail-text">詳細</span>
+                                        <a
+                                            href="{{ route('attendance.detail.show', $row['detail_id']) }}"
+                                            class="attendance-table__detail-link">
+                                            <span class="attendance-table__detail-text">詳細</span>
+                                        </a>
                                     </td>
                                 </tr>
                             @empty

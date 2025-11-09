@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
+use App\Http\Controllers\AttendanceDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +42,7 @@ Route::middleware(['guest:web'])->group(function (): void {
  // ログイン後のメイン画面を勤怠打刻画面に変更（FN006）
 Route::middleware(['auth:web'])->group(function (): void {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/action', [AttendanceController::class, 'index'])->name('attendance.action');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clockIn');
     Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])->name('attendance.breakStart');
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])->name('attendance.breakEnd');
@@ -50,6 +52,14 @@ Route::middleware(['auth:web'])->group(function (): void {
 Route::middleware('auth')->group(function () {
     Route::get('/attendance/list', [AttendanceListController::class, 'index'])
         ->name('attendance.list');
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/attendance/detail/{id}', [AttendanceDetailController::class, 'show'])
+        ->name('attendance.detail.show');
+
+    Route::post('/attendance/detail/{id}/request', [AttendanceDetailController::class, 'requestCorrection'])
+        ->name('attendance.detail.request');
 });
 
 // === メール認証（一般ユーザー） ===

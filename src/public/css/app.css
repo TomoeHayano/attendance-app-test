@@ -8,6 +8,10 @@ html, body {
   line-height: 1.6;
 }
 
+body.body--plain {
+  background: #FFFFFF;
+}
+
 /* 固定ヘッダー（高さ80px・黒帯） */
 .global-header {
   position: fixed;
