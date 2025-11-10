@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\AttendanceDetailController;
+use App\Http\Controllers\Auth\RequestListController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +61,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/attendance/detail/{id}/request', [AttendanceDetailController::class, 'requestCorrection'])
         ->name('attendance.detail.request');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/stamp_correction_request/list', [RequestListController::class, 'index'])
+    ->name('stamp_correction_request.list');
 });
 
 // === メール認証（一般ユーザー） ===
