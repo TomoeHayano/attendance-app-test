@@ -1,8 +1,8 @@
 .site-header {
     position: fixed;
     inset: 0 0 auto 0;
-    height: 80px;                 /* Group 66 */
-    background: var(--color-black); /* Rectangle 16 */
+    height: 80px;
+    background: var(--color-black);
     z-index: 100;
 }
 
@@ -38,8 +38,8 @@
     height: 80px;
     color: var(--color-white);
     font-weight: 700;
-    font-size: 24px;   /* Figma数値 */
-    line-height: 29px; /* Figma数値 */
+    font-size: 24px;
+    line-height: 29px;
     text-decoration: none;
 }
 

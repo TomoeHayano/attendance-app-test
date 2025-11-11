@@ -170,53 +170,7 @@
     width: 12%;
 }
 
-@media (max-width: 1024px) {
-    .request-list {
-        padding: 0 16px 96px;
-    }
-
-    .request-list__tabs-list {
-        gap: 72px;
-        padding-left: 40px;
-    }
-
-    .request-list__table-wrapper {
-        padding: 24px 24px;
-    }
-
-    .request-table {
-        font-size: 14px;
-    }
-
-    .request-table th,
-    .request-table td {
-        padding: 8px 8px;
-        line-height: 1.4;
-    }
-}
-
-@media (max-width: 768px) {
-    .request-list {
-        padding: 0 16px 96px;
-    }
-
-    .request-list__table-wrapper {
-        overflow-x: auto;
-        padding: 24px 16px;
-    }
-
-    .request-table {
-        min-width: 640px;
-    }
-
-    .request-table th,
-    .request-table td {
-        padding: 10px 8px;
-        line-height: 1.4;
-    }
-}
-
-/* Responsive (PC: 1400-1540px) */
+/* ========== Responsive (PC：1400-1540px) ========== */
 @media screen and (min-width: 1400px) and (max-width: 1540px) {
     .request-list {
         padding-left: 32px;
