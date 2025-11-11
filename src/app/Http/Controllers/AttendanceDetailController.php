@@ -86,7 +86,7 @@ class AttendanceDetailController extends Controller
                     continue;
                 }
 
-                $correction->breakRecords()->create([
+                $correction->correctionBreaks()->create([
                     'corrected_break_start' => $break['start'] ?: null,
                     'corrected_break_end'   => $break['end'] ?: null,
                 ]);
