@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('css/request_list.css') }}">
 @endsection
 
+@section('body_class', 'page--request-list')
+
 @section('content')
 <section class="request-list">
     <h1 class="page-title">申請一覧</h1>
@@ -35,7 +37,7 @@
                 <tr>
                     <th scope="col">状態</th>
                     <th scope="col">名前</th>
-                    <th scope="col">対象日</th>
+                    <th scope="col">対象日時</th>
                     <th scope="col">申請理由</th>
                     <th scope="col">申請日時</th>
                     <th scope="col">詳細</th>
@@ -52,7 +54,7 @@
 
                         {{-- 対象日時（修正した日付）→ 対象勤怠日を表示 --}}
                         <td>
-                            {{ $requestItem->attendance?->date?->format('Y-m-d') }}
+                            {{ $requestItem->attendance?->date?->format('Y/m/d') }}
                         </td>
 
                         {{-- 申請理由（備考） --}}
@@ -60,7 +62,7 @@
 
                         {{-- 申請日時（秒なし） --}}
                         <td>
-                            {{ $requestItem->created_at?->copy()->setSecond(0)->format('Y-m-d H:i') }}
+                            {{ $requestItem->created_at?->copy()->setSecond(0)->format('Y/m/d') }}
                         </td>
 
                         {{-- 詳細リンク：勤怠詳細（申請詳細）画面へ --}}
