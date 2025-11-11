@@ -24,11 +24,46 @@ body.body--plain {
   height: 100%;
   display: flex;
   align-items: center;
-  padding-left: 25px;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 0 25px;
 }
 .header-logo {
   height: 36px;
   width: auto;
+}
+.global-nav {
+  margin-left: auto;
+}
+.global-nav .nav-list {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.global-nav form {
+  margin: 0;
+  display: inline;
+}
+.global-nav .nav-list a,
+.global-nav .nav-link-button {
+  display: inline-flex;
+  align-items: center;
+  height: 80px;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 29px;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.global-nav .nav-link-button {
+  font-family: inherit;
 }
 
 /* ヘッダー分の余白を全ページで確保 */
