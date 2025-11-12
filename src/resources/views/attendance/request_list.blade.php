@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="{{ asset('css/request_list.css') }}">
 @endsection
 
-@section('body_class', 'page--request-list')
+@section('body_class', 'body--tinted page--request-list')
 
 @section('content')
 <section class="request-list">

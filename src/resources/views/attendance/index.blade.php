@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="{{ asset('css/attendance.css') }}">
 @endsection
 
+@section('body_class', 'body--tinted')
+
 @section('content')
   {{-- @include('components.header') --}}
   <div class="header-spacer"></div>

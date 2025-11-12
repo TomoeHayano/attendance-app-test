@@ -85,16 +85,18 @@ class AttendanceDetailUpdateRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
-            'clock_in.required'     => '出勤時間を入力してください',
-            'clock_out.required'    => '退勤時間を入力してください',
-            'clock_in.date_format'  => '出勤時間は「HH:MM」形式の半角で入力してください',
-            'clock_out.date_format' => '退勤時間は「HH:MM」形式の半角で入力してください',
+        $timeFormatMessage = '時間は「HH:MM」形式の半角で入力してください';
 
-            'breakRecords.*.start.date_format' => '休憩時間が不適切な値です',
-            'breakRecords.*.end.date_format'   => '休憩時間もしくは退勤時間が不適切な値です',
-            'breakRecords.*.start.regex'       => '休憩時間は「HH:MM」形式の半角で入力してください',
-            'breakRecords.*.end.regex'         => '休憩時間は「HH:MM」形式の半角で入力してください',
+        return [
+            'clock_in.required'  => '出勤時間を入力してください',
+            'clock_out.required' => '退勤時間を入力してください',
+
+            'clock_in.date_format'     => $timeFormatMessage,
+            'clock_out.date_format'    => $timeFormatMessage,
+            'breakRecords.*.start.date_format' => $timeFormatMessage,
+            'breakRecords.*.end.date_format'   => $timeFormatMessage,
+            'breakRecords.*.start.regex'       => $timeFormatMessage,
+            'breakRecords.*.end.regex'         => $timeFormatMessage,
 
             'remarks.required' => '備考を記入してください',
             'remarks.max'      => '備考は255文字以内で入力してください',
@@ -110,7 +112,7 @@ class AttendanceDetailUpdateRequest extends FormRequest
             // 1. 出勤 > 退勤 / 退勤 < 出勤 の場合（どちらも同じ条件）
             if ($clockIn !== null && $clockOut !== null && $clockIn >= $clockOut) {
                 $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
-                $validator->errors()->add('clock_out', '出勤時間もしくは退勤時間が不適切な値です');
+                $validator->errors()->add('clIntelephense: ock_out', '出勤時間もしくは退勤時間が不適切な値です');
             }
 
             $breakRecords = $this->input('breakRecords', []);

@@ -13,6 +13,7 @@ body.body--plain {
 }
 body.body--tinted {
   background: #F0EFF2;
+  min-height: 100vh;
 }
 
 /* 固定ヘッダー（高さ80px・黒帯） */

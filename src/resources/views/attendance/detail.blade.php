@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="{{ asset('css/attendance-detail.css') }}">
 @endsection
 
+@section('body_class', 'body--tinted')
+
 @section('content')
 @php
     $formatTime = static function ($time): string {

@@ -27,12 +27,12 @@ Route::middleware('guest')->group(function (): void {
         ->name('register');        // 会員登録フォーム表示（FN004でログインへ導線）
 
     Route::post('/register', [RegisteredUserController::class, 'store'])
-        ->name('register.post');   // 新規会員登録
+        ->name('register.post');
 });
 
 // 例：登録直後の遷移先（FN005）
 Route::middleware('auth')->get('/attendance/clock', function (): \Illuminate\View\View {
-    return view('attendance.clock'); // 仮ビュー。後で本実装へ差し替え
+    return view('attendance.clock');
 })->name('attendance.clock');
 
 Route::middleware(['guest:web'])->group(function (): void {
