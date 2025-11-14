@@ -94,11 +94,12 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     });
 
     Route::middleware(['auth:admin'])->group(function (): void {
-        Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+        Route::get('/attendance/list', [AttendanceController::class, 'daily'])
+            ->name('attendance.daily');
     });
 });
+
+
 
 // ログアウト（両者）
 Route::post('/logout', [UserLoginController::class, 'destroy'])->name('logout');
