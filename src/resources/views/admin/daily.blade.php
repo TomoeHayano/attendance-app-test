@@ -33,7 +33,7 @@
                         <input
                             id="date"
                             type="date"
-                            name="date"
+                            name="target_date"
                             value="{{ $targetDate->toDateString() }}"
                             class="attendance-date__input"
                         >

@@ -10,6 +10,8 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\Auth\RequestListController;
+use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,15 +90,22 @@ Route::middleware('auth')->group(function () {
 
 // === 管理者用（ログイン表示/処理） ===
 Route::prefix('admin')->name('admin.')->group(function (): void {
+    // 未ログイン（管理者）
     Route::middleware(['guest:admin'])->group(function (): void {
-        Route::get('/login', [AdminLoginController::class, 'create'])->name('login');
-        Route::post('/login', [AdminLoginController::class, 'store']);
+        Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+            ->name('login');
+
+        Route::post('/login', [AuthenticatedSessionController::class, 'store']);
     });
 
+    // ログイン済み（管理者）
     Route::middleware(['auth:admin'])->group(function (): void {
-        Route::get('/attendance/list', [AttendanceController::class, 'daily'])
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'daily'])
             ->name('attendance.daily');
     });
+
+    Route::get('/attendance/detail/{attendance}', [AttendanceDetailController::class, 'show'])
+            ->name('attendance.detail');
 });
 
 
