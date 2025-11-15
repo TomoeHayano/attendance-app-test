@@ -2,40 +2,55 @@
 
 @section('title', '勤怠一覧（管理者）')
 
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/admin-attendance-list.css') }}">
+@endsection
+
 @section('content')
-<main class="page">
-    <header class="page__header">
-        <h1 class="page__title">勤怠一覧（管理者）</h1>
-    </header>
+    <main class="admin-attendance">
+        <div class="admin-attendance__inner">
+            <header class="admin-attendance__header" aria-label="ページ見出し">
+                <span class="admin-attendance__title-line" aria-hidden="true"></span>
+                <h1 class="admin-attendance__title">
+                    {{ $targetDate->format('Y年n月j日の勤怠') }}
+                </h1>
+            </header>
 
-    <section class="attendance">
-        <header class="attendance__header">
-            <h2 class="attendance__heading">
-                {{ $targetDate->format('Y年n月j日の勤怠') }}
-            </h2>
-
-            {{-- 日付変更フォーム --}}
-            <form class="attendance-date" action="{{ route('admin.attendance.daily') }}" method="get">
-                <div class="attendance-date__nav">
+            {{-- 日付ナビゲーション --}}
+            <section class="admin-attendance__controls" aria-label="日付選択">
+                <form action="{{ route('admin.attendance.daily') }}" method="get" class="admin-attendance__nav-form">
                     {{-- 前日 --}}
                     <button
                         type="submit"
                         name="date"
                         value="{{ $targetDate->copy()->subDay()->toDateString() }}"
-                        class="attendance-date__button"
+                        class="admin-attendance__nav-button admin-attendance__nav-button--prev"
                     >
-                        &lt; 前日
+                        <img
+                            src="{{ asset('images/左矢印.png') }}"
+                            alt=""
+                            aria-hidden="true"
+                            class="admin-attendance__nav-icon"
+                        >
+                        <span class="admin-attendance__nav-text">前日</span>
                     </button>
 
-                    {{-- 日付ピッカー --}}
-                    <div class="attendance-date__picker">
-                        <label for="date" class="attendance-date__label">日付</label>
+                    {{-- カレンダー＆日付入力 --}}
+                    <div class="admin-attendance__current-date">
+                        <img
+                            src="{{ asset('images/カレンダー.png') }}"
+                            alt=""
+                            aria-hidden="true"
+                            class="admin-attendance__calendar-icon"
+                        >
+                        <label for="target-date" class="visually-hidden">表示する日付を選択</label>
                         <input
-                            id="date"
+                            id="target-date"
                             type="date"
                             name="target_date"
                             value="{{ $targetDate->toDateString() }}"
-                            class="attendance-date__input"
+                            onchange="this.form.submit()"
+                            class="admin-attendance__date-input"
                         >
                     </div>
 
@@ -44,86 +59,79 @@
                         type="submit"
                         name="date"
                         value="{{ $targetDate->copy()->addDay()->toDateString() }}"
-                        class="attendance-date__button"
+                        class="admin-attendance__nav-button admin-attendance__nav-button--next"
                     >
-                        翌日 &gt;
+                        <span class="admin-attendance__nav-text">翌日</span>
+                        <img
+                            src="{{ asset('images/右矢印.png') }}"
+                            alt=""
+                            aria-hidden="true"
+                            class="admin-attendance__nav-icon"
+                        >
                     </button>
+                </form>
+            </section>
+
+            {{-- 勤怠一覧 --}}
+            <section class="admin-attendance__table-card" aria-label="勤怠一覧">
+                <div class="admin-attendance__table-wrap">
+                    <table class="admin-attendance-table">
+                        <colgroup>
+                            <col class="admin-attendance-table__col admin-attendance-table__col--name">
+                            <col class="admin-attendance-table__col admin-attendance-table__col--time">
+                            <col class="admin-attendance-table__col admin-attendance-table__col--time">
+                            <col class="admin-attendance-table__col admin-attendance-table__col--time">
+                            <col class="admin-attendance-table__col admin-attendance-table__col--time">
+                            <col class="admin-attendance-table__col admin-attendance-table__col--detail">
+                        </colgroup>
+                        <thead class="admin-attendance-table__head">
+                            <tr>
+                                <th scope="col">名前</th>
+                                <th scope="col">出勤</th>
+                                <th scope="col">退勤</th>
+                                <th scope="col">休憩</th>
+                                <th scope="col">合計</th>
+                                <th scope="col" class="admin-attendance-table__cell--detail">詳細</th>
+                            </tr>
+                        </thead>
+                        <tbody class="admin-attendance-table__body">
+                            @forelse ($attendances as $attendance)
+                                <tr>
+                                    <td class="admin-attendance-table__cell admin-attendance-table__cell--name">
+                                        {{ $attendance->user?->name }}
+                                    </td>
+                                    <td class="admin-attendance-table__cell">
+                                        {{ $attendance->clock_in_formatted }}
+                                    </td>
+                                    <td class="admin-attendance-table__cell">
+                                        {{ $attendance->clock_out_formatted }}
+                                    </td>
+                                    <td class="admin-attendance-table__cell">
+                                        {{ $attendance->break_time_formatted }}
+                                    </td>
+                                    <td class="admin-attendance-table__cell">
+                                        {{ $attendance->work_time_formatted }}
+                                    </td>
+                                    <td class="admin-attendance-table__cell admin-attendance-table__cell--detail">
+                                        <a
+                                            href="{{ route('admin.attendance.detail', ['attendance' => $attendance->id]) }}"
+                                            class="admin-attendance-table__detail-link"
+                                        >
+                                            詳細
+                                        </a>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td class="admin-attendance-table__cell admin-attendance-table__cell--empty" colspan="6">
+                                        この日に登録された勤怠はありません。
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </header>
-
-        <div class="attendance__table-wrapper">
-            <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th scope="col">名前</th>
-                        <th scope="col">出勤</th>
-                        <th scope="col">退勤</th>
-                        <th scope="col">休憩</th>
-                        <th scope="col">合計</th>
-                        <th scope="col">詳細</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($attendances as $attendance)
-                        <tr>
-                            {{-- 名前 --}}
-                            <td>{{ $attendance->user?->name }}</td>
-
-                            {{-- 出勤 --}}
-                            <td>
-                                @if ($attendance->clock_in)
-                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $attendance->clock_in)->format('H:i') }}
-                                @endif
-                            </td>
-
-                            {{-- 退勤 --}}
-                            <td>
-                                @if ($attendance->clock_out)
-                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $attendance->clock_out)->format('H:i') }}
-                                @endif
-                            </td>
-
-                            {{-- 休憩合計（h:mm） --}}
-                            <td>
-                                @if (!is_null($attendance->total_break_minutes))
-                                    @php
-                                        $h = intdiv($attendance->total_break_minutes, 60);
-                                        $m = $attendance->total_break_minutes % 60;
-                                    @endphp
-                                    {{ sprintf('%d:%02d', $h, $m) }}
-                                @endif
-                            </td>
-
-                            {{-- 勤務合計（h:mm） --}}
-                            <td>
-                                @if (!is_null($attendance->total_work_minutes))
-                                    @php
-                                        $h = intdiv($attendance->total_work_minutes, 60);
-                                        $m = $attendance->total_work_minutes % 60;
-                                    @endphp
-                                    {{ sprintf('%d:%02d', $h, $m) }}
-                                @endif
-                            </td>
-
-                            {{-- 詳細リンク --}}
-                            <td>
-                                <a
-                                    href="{{ route('admin.attendance.detail', ['attendance' => $attendance->id]) }}"
-                                    class="attendance-table__link"
-                                >
-                                    詳細
-                                </a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">この日に登録された勤怠はありません。</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            </section>
         </div>
-    </section>
-</main>
+    </main>
 @endsection
