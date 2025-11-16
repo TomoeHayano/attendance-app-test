@@ -12,6 +12,7 @@ use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\Auth\RequestListController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\AttendanceDetailController as AdminAttendanceDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,25 +91,36 @@ Route::middleware('auth')->group(function () {
 
 // === 管理者用（ログイン表示/処理） ===
 Route::prefix('admin')->name('admin.')->group(function (): void {
-    // 未ログイン（管理者）
-    Route::middleware(['guest:admin'])->group(function (): void {
-        Route::get('/login', [AuthenticatedSessionController::class, 'create'])
-            ->name('login');
+    
+// 未ログイン（管理者）
+Route::middleware(['guest:admin'])->group(function (): void {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])
+        ->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+});
 
-        Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    });
-
-    // ログイン済み（管理者）
-    Route::middleware(['auth:admin'])->group(function (): void {
-        Route::get('/attendance/list', [AdminAttendanceController::class, 'daily'])
-            ->name('attendance.daily');
-    });
-
+// ログイン済み（管理者）
+Route::middleware(['auth:admin'])->group(function (): void {
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'daily'])
+        ->name('attendance.daily');
+});
     Route::get('/attendance/detail/{attendance}', [AttendanceDetailController::class, 'show'])
             ->name('attendance.detail');
 });
 
+Route::prefix('admin')
+    ->middleware('auth:admin')
+    ->group(function (): void {
+        // 管理者：勤怠詳細表示
+        Route::get('attendance/{id}', [AdminAttendanceDetailController::class, 'show'])
+            ->name('admin.attendance.detail')
+            ->whereNumber('id');
 
+        // 管理者：勤怠修正更新
+        Route::put('attendance/{id}', [AdminAttendanceDetailController::class, 'update'])
+            ->name('admin.attendance.detail.update')
+            ->whereNumber('id');
+    });
 
 // ログアウト（両者）
 Route::post('/logout', [UserLoginController::class, 'destroy'])->name('logout');

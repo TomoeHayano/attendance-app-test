@@ -1,26 +1,41 @@
 @extends('layouts.app')
+@php
+    use Carbon\Carbon;
 
-@section('title', '勤怠詳細')
+    $attendanceDate = $attendance->date instanceof Carbon
+        ? $attendance->date
+        : Carbon::parse($attendance->date);
+
+    $formatTime = static function ($value): string {
+        if ($value instanceof Carbon) {
+            return $value->format('H:i');
+        }
+
+        $stringValue = trim((string) ($value ?? ''));
+
+        if ($stringValue === '') {
+            return '';
+        }
+
+        return Carbon::parse($stringValue)->format('H:i');
+    };
+
+    $breakLabel = static function (int $order): string {
+        return $order === 1 ? '休憩' : '休憩' . $order;
+    };
+@endphp
+
+@section('title', '勤怠詳細（管理者）')
 
 @section('css')
-    <link rel="stylesheet" href="{{ asset('css/attendance-detail.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin-attendance-detail.css') }}">
 @endsection
 
 @section('body_class', 'body--tinted')
 
 @section('content')
 @php
-    $formatTime = static function ($time): string {
-        if (empty($time) && $time !== '0') {
-            return '';
-        }
-
-        return substr((string) $time, 0, 5);
-    };
-
-    $breakLabel = static function (int $order): string {
-        return $order === 1 ? '休憩' : '休憩' . $order;
-    };
+    $readonly = $hasPendingRequest;
 @endphp
 
 <main class="attendance-detail">
@@ -31,41 +46,34 @@
             <p class="attendance-detail__flash">{{ session('status') }}</p>
         @endif
 
-        {{-- 修正可否フラグ --}}
-        @php
-            $readonly = $hasPendingRequest;
-        @endphp
-
         <form
-            action="{{ $readonly ? '#' : route('attendance.detail.request', $attendance->id) }}"
+            action="{{ $readonly ? '#' : route('admin.attendance.detail.update', ['id' => $attendance->id]) }}"
             method="post"
         >
             @csrf
+            @method('PUT')
 
             <table class="attendance-detail__table">
                 <tbody>
-                    {{-- 名前 --}}
                     <tr>
                         <th scope="row">名前</th>
-                        <td>{{ $attendance->user->name }}</td>
+                        <td>{{ $attendance->user->name ?? '不明' }}</td>
                     </tr>
 
-                    {{-- 日付 --}}
                     <tr>
                         <th scope="row">日付</th>
                         <td>
                             <div class="attendance-detail__date">
                                 <span class="attendance-detail__date-year">
-                                    {{ $attendance->date->format('Y年') }}
+                                    {{ $attendanceDate->format('Y年') }}
                                 </span>
                                 <span class="attendance-detail__date-day">
-                                    {{ $attendance->date->format('n月j日') }}
+                                    {{ $attendanceDate->format('n月j日') }}
                                 </span>
                             </div>
                         </td>
                     </tr>
 
-                    {{-- 出勤・退勤 --}}
                     @php
                         $clockMessages = collect($errors->get('clock_in'))
                             ->merge($errors->get('clock_out'))
@@ -112,7 +120,6 @@
                         </td>
                     </tr>
 
-                    {{-- 休憩（既存レコード分） --}}
                     @foreach ($breakRecords as $index => $breakRecord)
                         @php
                             $breakMessages = collect($errors->get("breakRecords.$index.start"))
@@ -125,13 +132,12 @@
                             <td>
                                 <div class="attendance-detail__field-group">
                                     <div class="attendance-detail__time-row">
-                                        <input type="hidden" name="breakRecords[{{ $index }}][required]" value="1">
                                         <div class="attendance-detail__time-field">
                                             <input
                                                 type="text"
                                                 name="breakRecords[{{ $index }}][start]"
                                                 class="attendance-detail__time-input"
-                                                value="{{ old("breakRecords.$index.start", $formatTime($breakRecord->break_start)) }}"
+                                                value="{{ old("breakRecords.$index.start", $formatTime($breakRecord->break_start ?? null)) }}"
                                                 inputmode="numeric"
                                                 data-normalize-time
                                                 @if($readonly) readonly @endif
@@ -143,7 +149,7 @@
                                                 type="text"
                                                 name="breakRecords[{{ $index }}][end]"
                                                 class="attendance-detail__time-input"
-                                                value="{{ old("breakRecords.$index.end", $formatTime($breakRecord->break_end)) }}"
+                                                value="{{ old("breakRecords.$index.end", $formatTime($breakRecord->break_end ?? null)) }}"
                                                 inputmode="numeric"
                                                 data-normalize-time
                                                 @if($readonly) readonly @endif
@@ -162,12 +168,9 @@
                         </tr>
                     @endforeach
 
-                    {{-- 休憩：追加で1行分の空フィールド --}}
                     @php
                         $newIndex = $breakRecords->count();
                         $nextOrder = $newIndex + 1;
-                    @endphp
-                    @php
                         $newBreakMessages = collect($errors->get("breakRecords.$newIndex.start"))
                             ->merge($errors->get("breakRecords.$newIndex.end"))
                             ->unique()
@@ -213,7 +216,6 @@
                         </td>
                     </tr>
 
-                    {{-- 備考 --}}
                     <tr>
                         <th scope="row">備考</th>
                         <td>
@@ -221,10 +223,10 @@
                                 <textarea
                                     name="remarks"
                                     class="attendance-detail__remarks"
-                                    maxlength="500"
+                                    maxlength="255"
                                     data-autosize
                                     @if($readonly) readonly @endif
-                                >{{ old('remarks') }}</textarea>
+                                >{{ old('remarks', $attendance->remarks) }}</textarea>
                                 @error('remarks')
                                     <div class="attendance-detail__error-list">
                                         <p class="form__error">{{ $message }}</p>
@@ -236,7 +238,6 @@
                 </tbody>
             </table>
 
-            {{-- ボタン or メッセージ --}}
             <div class="attendance-detail__footer">
                 @if ($readonly)
                     <p class="attendance-detail__pending-message" style="color: #FF000080;">
@@ -244,13 +245,14 @@
                     </p>
                 @else
                     <button type="submit" class="attendance-detail__submit">
-                        修正
+                        修正する
                     </button>
                 @endif
             </div>
         </form>
     </section>
 </main>
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {

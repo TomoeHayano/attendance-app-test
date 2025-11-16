@@ -114,7 +114,7 @@
                                     </td>
                                     <td class="admin-attendance-table__cell admin-attendance-table__cell--detail">
                                         <a
-                                            href="{{ route('admin.attendance.detail', ['attendance' => $attendance->id]) }}"
+                                            href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}"
                                             class="admin-attendance-table__detail-link"
                                         >
                                             詳細

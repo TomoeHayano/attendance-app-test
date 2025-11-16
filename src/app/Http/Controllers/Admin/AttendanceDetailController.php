@@ -3,16 +3,87 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AdminDetailUpdateRequest;
 use App\Models\Attendance;
+use App\Models\CorrectionRequest;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class AdminAttendanceDetailController extends Controller
+class AttendanceDetailController extends Controller
 {
-    public function show(Attendance $attendance): View
+    public function show(int $id): View
     {
-        // ひとまず仮画面。後でちゃんとした詳細ビューに差し替えればOK
-        return view('admin.attendance_detail', [
-            'attendance' => $attendance,
+        /** @var \App\Models\Attendance $attendance */
+        $attendance = Attendance::with(['user', 'breakRecords', 'correctionRequests'])
+            ->findOrFail($id);
+
+        $hasPendingRequest = $attendance->correctionRequests()
+            ->where('status', CorrectionRequest::STATUS_PENDING)
+            ->exists();
+
+        /** @var \Illuminate\Support\Collection<int, \App\Models\BreakRecord> $breakRecords */
+        $breakRecords = $attendance->breakRecords()
+            ->orderBy('break_start')
+            ->get();
+
+        return $this->renderDetailView($attendance, $breakRecords, $hasPendingRequest);
+    }
+
+    private function renderDetailView(
+        Attendance $attendance,
+        Collection $breakRecords,
+        bool $hasPendingRequest
+    ): View {
+        return view('admin.detail', [
+            'attendance'        => $attendance,
+            'breakRecords'      => $breakRecords,
+            'hasPendingRequest' => $hasPendingRequest,
         ]);
+    }
+
+    public function update(AdminDetailUpdateRequest $request, int $id): RedirectResponse
+    {
+        /** @var \App\Models\Attendance $attendance */
+        $attendance = Attendance::with(['breakRecords', 'correctionRequests'])
+            ->findOrFail($id);
+
+        // 承認待ちのときは修正禁止
+        if ($attendance->correctionRequests()
+            ->where('status', CorrectionRequest::STATUS_PENDING)
+            ->exists()
+        ) {
+            return redirect()
+                ->route('admin.attendance.detail', ['id' => $attendance->id])
+                ->with('status', '承認待ちのため修正はできません。');
+        }
+
+        DB::transaction(function () use ($attendance, $request): void {
+            // 管理者は attendances を直接更新
+            $attendance->update([
+                'clock_in'  => $request->input('clock_in'),
+                'clock_out' => $request->input('clock_out'),
+                'remarks'   => $request->input('remarks'),
+            ]);
+
+            // 休憩は一旦全削除してから再登録
+            $attendance->breakRecords()->delete();
+
+            foreach ($request->input('breakRecords', []) as $break) {
+                if (empty($break['start']) && empty($break['end'])) {
+                    continue;
+                }
+
+                $attendance->breakRecords()->create([
+                    'break_start' => $break['start'] ?: null,
+                    'break_end'   => $break['end'] ?: null,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('admin.attendance.detail', ['id' => $attendance->id])
+            ->with('status', '勤怠情報を修正しました。');
     }
 }
