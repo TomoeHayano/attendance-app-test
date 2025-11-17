@@ -1,0 +1,168 @@
+/* Staff list page (admin) */
+.staff {
+    min-height: 100vh;
+    background: #F0EFF2;
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 0 16px 120px;
+    box-sizing: border-box;
+}
+
+.staff__inner {
+    width: min(100%, 1512px);
+    padding-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+}
+
+.staff__header {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 48px;
+}
+
+.staff__title {
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.staff__title::before {
+    content: "";
+    width: 8px;
+    height: 36px;
+    background: #000000;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.staff__section {
+    width: 100%;
+    max-width: 900px;
+}
+
+.staff__table-wrapper {
+    width: 100%;
+    background: #FFFFFF;
+    border-radius: 10px;
+    padding: 14px 0 0;
+}
+
+.staff-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.staff-table__head {
+    border-bottom: 3px solid #E1E1E1;
+}
+
+.staff-table__heading {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #737373;
+    height: 60px;
+    text-align: center;
+}
+
+.staff-table__heading--name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 171px;
+    text-align: left;
+}
+
+.staff-table__heading--email {
+    text-align: center;
+    padding: 0;
+}
+
+.staff-table__heading--attendance {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 151px 0 0;
+    text-align: center;
+}
+
+.staff-table__body .staff-table__row {
+    border-bottom: 2px solid #E1E1E1;
+}
+
+.staff-table__body .staff-table__row:last-child {
+    border-bottom: none;
+}
+
+.staff-table__cell {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: #737373;
+    height: 60px;
+    text-align: center;
+}
+
+.staff-table__cell--name {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 171px;
+    text-align: left;
+}
+
+.staff-table__cell--email {
+    text-align: center;
+    padding: 0;
+}
+
+.staff-table__cell--attendance {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 151px 0 0;
+    text-align: center;
+}
+
+.staff-table__text {
+    color: #000000;
+    display: inline-block;
+}
+
+.staff-table__text--detail {
+    width: 100%;
+    text-align: center;
+}
+
+.staff-table__row--empty .staff-table__cell {
+    text-align: center;
+    padding: 32px 16px;
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .staff {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .staff__inner {
+        width: 100%;
+        max-width: 1512px;
+    }
+
+    .staff__header,
+    .staff__section {
+        width: calc(100% - 212px);
+        max-width: 900px;
+    }
+}

@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\RequestListController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AttendanceDetailController as AdminAttendanceDetailController;
+use App\Http\Controllers\Admin\StaffController;
 
 /*
 |--------------------------------------------------------------------------
@@ -72,22 +73,26 @@ Route::middleware('auth')->group(function () {
 });
 
 // === メール認証（一般ユーザー） ===
-// 誘導画面
-// Route::get('/email/verify', function () {
-//     return view('auth.verify');
-// })->middleware('auth:web')->name('verification.notice');
+誘導画面
+Route::get('/email/verify', function () {
+    return view('auth.verify');
+})->middleware('auth:web')->name('verification.notice');
 
-// // 認証リンクの処理（署名付きURL）
-// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//     $request->fulfill();
-//     return redirect()->route('dashboard');
-// })->middleware(['auth:web', 'signed'])->name('verification.verify');
+// 認証リンクの処理（署名付きURL）
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('dashboard');
+})->middleware(['auth:web', 'signed'])->name('verification.verify');
 
-// // 再送ボタン
-// Route::post('/email/verification-notification', function (Request $request) {
-//     $request->user()->sendEmailVerificationNotification();
-//     return back()->with('status', 'verification-link-sent');
-// })->middleware(['auth:web', 'throttle:6,1'])->name('verification.send');
+Route::post('/email/verification-notification', [VerifyEmailController::class, 'send'])
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+// 再送ボタン
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth:web', 'throttle:6,1'])->name('verification.send');
 
 // === 管理者用（ログイン表示/処理） ===
 Route::prefix('admin')->name('admin.')->group(function (): void {
@@ -120,6 +125,15 @@ Route::prefix('admin')
         Route::put('attendance/{id}', [AdminAttendanceDetailController::class, 'update'])
             ->name('admin.attendance.detail.update')
             ->whereNumber('id');
+    });
+
+Route::middleware(['auth:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function (): void {
+        // スタッフ一覧（管理者）
+        Route::get('/staff/list', [StaffController::class, 'index'])
+            ->name('staff.index');
     });
 
 // ログアウト（両者）

@@ -75,6 +75,10 @@ body.body--tinted {
   padding-top: 80px;
 }
 
+body.body--staff .page-wrap {
+  padding-top: 206px;
+}
+
 /* アクセシビリティ用エラーメッセージ（共通色） */
 .form-error {
   color: #d32f2f;
