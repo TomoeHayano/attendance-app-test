@@ -156,7 +156,7 @@ return [
             // 'window' => 0,
         ]),
         
-        Laravel\Fortify\Features::registration(), // 任意（独自登録と併用可）
+        Laravel\Fortify\Features::registration(),
         Laravel\Fortify\Features::resetPasswords(),
     ],
 ];

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AttendanceDetailController as AdminAttendanceDetailController;
 use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Auth\VerifyEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +36,7 @@ Route::middleware('guest')->group(function (): void {
 });
 
 // 例：登録直後の遷移先（FN005）
-Route::middleware('auth')->get('/attendance/clock', function (): \Illuminate\View\View {
+Route::middleware(['auth', 'verified'])->get('/attendance/clock', function (): \Illuminate\View\View {
     return view('attendance.clock');
 })->name('attendance.clock');
 
@@ -45,7 +46,7 @@ Route::middleware(['guest:web'])->group(function (): void {
 });
 
  // ログイン後のメイン画面を勤怠打刻画面に変更（FN006）
-Route::middleware(['auth:web'])->group(function (): void {
+Route::middleware(['auth:web', 'verified'])->group(function (): void {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::get('/attendance/action', [AttendanceController::class, 'index'])->name('attendance.action');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clockIn');
@@ -54,12 +55,12 @@ Route::middleware(['auth:web'])->group(function (): void {
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clockOut');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/attendance/list', [AttendanceListController::class, 'index'])
         ->name('attendance.list');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/attendance/detail/{id}', [AttendanceDetailController::class, 'show'])
         ->name('attendance.detail.show');
 
@@ -67,32 +68,29 @@ Route::middleware(['auth'])->group(function () {
         ->name('attendance.detail.request');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth:web', 'verified'])->group(function () {
     Route::get('/stamp_correction_request/list', [RequestListController::class, 'index'])
     ->name('stamp_correction_request.list');
 });
 
 // === メール認証（一般ユーザー） ===
-誘導画面
-Route::get('/email/verify', function () {
-    return view('auth.verify');
-})->middleware('auth:web')->name('verification.notice');
+Route::get('/email/verify', [VerifyEmailController::class, 'notice'])
+    ->middleware('auth:web')
+    ->name('verification.notice');
 
-// 認証リンクの処理（署名付きURL）
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect()->route('dashboard');
-})->middleware(['auth:web', 'signed'])->name('verification.verify');
+Route::get('/email/verify/prompt', [VerifyEmailController::class, 'prompt'])
+    ->middleware('auth:web')
+    ->name('verification.prompt');
 
+// 認証メール再送
 Route::post('/email/verification-notification', [VerifyEmailController::class, 'send'])
-    ->middleware(['auth', 'throttle:6,1'])
+    ->middleware(['auth:web', 'throttle:6,1'])
     ->name('verification.send');
 
-// 再送ボタン
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('status', 'verification-link-sent');
-})->middleware(['auth:web', 'throttle:6,1'])->name('verification.send');
+// メール内リンク（本認証）
+Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify'])
+    ->middleware(['auth:web', 'signed'])
+    ->name('verification.verify');
 
 // === 管理者用（ログイン表示/処理） ===
 Route::prefix('admin')->name('admin.')->group(function (): void {
