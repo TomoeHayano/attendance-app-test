@@ -11,7 +11,7 @@ use Illuminate\View\View;
 class VerifyEmailController extends Controller
 {
     /**
-     * メール認証誘導画面表示 (/email/verify)
+     * メール認証誘導／案内画面表示 (/email/verify)
      *
      * @return View|RedirectResponse
      */
@@ -21,21 +21,11 @@ class VerifyEmailController extends Controller
             return redirect()->route('attendance.index');
         }
 
-        return view('auth.verify-email-invite');
-    }
+        $isPrompt = $request->boolean('prompt');
 
-    /**
-     * メール認証案内画面（認証はこちらからボタン遷移先）
-     *
-     * @return View|RedirectResponse
-     */
-    public function prompt(Request $request)
-    {
-        if ($request->user()?->hasVerifiedEmail()) {
-            return redirect()->route('attendance.index');
-        }
-
-        return view('auth.verify-email');
+        return $isPrompt
+            ? view('auth.verify-email')
+            : view('auth.verify-email-invite');
     }
 
     /**

@@ -78,10 +78,6 @@ Route::get('/email/verify', [VerifyEmailController::class, 'notice'])
     ->middleware('auth:web')
     ->name('verification.notice');
 
-Route::get('/email/verify/prompt', [VerifyEmailController::class, 'prompt'])
-    ->middleware('auth:web')
-    ->name('verification.prompt');
-
 // 認証メール再送
 Route::post('/email/verification-notification', [VerifyEmailController::class, 'send'])
     ->middleware(['auth:web', 'throttle:6,1'])

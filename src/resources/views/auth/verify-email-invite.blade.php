@@ -16,7 +16,7 @@
                 メール認証を完了してください。
             </p>
 
-            <a href="{{ route('verification.prompt') }}" class="verification__cta">
+            <a href="{{ route('verification.notice', ['prompt' => 1]) }}" class="verification__cta">
                 認証はこちらから
             </a>
 
