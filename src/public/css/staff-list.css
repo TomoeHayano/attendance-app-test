@@ -134,6 +134,17 @@
     text-align: center;
 }
 
+.staff-table__detail-link {
+    text-decoration: none;
+    color: #000000;
+}
+
+.staff-table__detail-text {
+    color: #000000;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+}
+
 .staff-table__text {
     color: #000000;
     display: inline-block;

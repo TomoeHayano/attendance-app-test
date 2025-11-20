@@ -43,7 +43,10 @@
                                     {{ $user->email }}
                                 </td>
                                 <td class="staff-table__cell staff-table__cell--attendance">
-                                    <span class="staff-table__text staff-table__text--detail">詳細</span>
+                                    <a href="{{ url('/admin/attendance/staff/' . $user->id) }}"
+                                        class="staff-table__detail-link">
+                                        <span class="staff-table__detail-text">詳細</span>
+                                    </a>
                                 </td>
                             </tr>
                         @empty

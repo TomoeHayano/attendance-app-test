@@ -10,16 +10,32 @@
 <header class="global-header">
     <div class="header-inner">
         <img src="{{ asset('storage/images/coachtech_white.png') }}" alt="COACHTECH" class="header-logo">
-        @auth
-            @php
+        @php
+            $navLinks = [];
+            $currentRouteName = optional(request()->route())->getName();
+            $isAdminGuard = auth('admin')->check();
+            $isAdminScreen = $isAdminGuard
+                || request()->routeIs('admin.*')
+                || request()->is('admin')
+                || request()->is('admin/*');
+
+            if ($isAdminScreen) {
+                $navLinks = [
+                    ['type' => 'link', 'label' => '勤怠一覧', 'url' => route('admin.attendance.daily')],
+                    ['type' => 'link', 'label' => 'スタッフ一覧', 'url' => route('admin.staff.index')],
+                    ['type' => 'link', 'label' => '申請一覧', 'url' => route('admin.stamp_correction_request.list')],
+                    ['type' => 'logout', 'label' => 'ログアウト', 'route' => route('admin.logout')],
+                ];
+            } elseif (auth()->check()) {
+                $requestListUrl = route('stamp_correction_request.list');
                 $navLinks = [
                     ['type' => 'link', 'label' => '勤怠', 'url' => route('attendance.index')],
                     ['type' => 'link', 'label' => '勤怠一覧', 'url' => route('attendance.list')],
-                    ['type' => 'link', 'label' => '申請', 'url' => route('stamp_correction_request.list')],
-                    ['type' => 'logout', 'label' => 'ログアウト'],
+                    ['type' => 'link', 'label' => '申請', 'url' => $requestListUrl],
+                    ['type' => 'logout', 'label' => 'ログアウト', 'route' => route('logout')],
                 ];
 
-                if (\Illuminate\Support\Facades\Route::currentRouteName() === 'attendance.action') {
+                if ($currentRouteName === 'attendance.action') {
                     $timezone   = (string) config('app.timezone', 'Asia/Tokyo');
                     $today      = \Carbon\Carbon::today($timezone);
                     $attendance = \App\Models\Attendance::query()
@@ -41,32 +57,32 @@
                                     'month' => $attendanceDate->month,
                                 ]),
                             ],
-                            ['type' => 'link', 'label' => '申請一覧', 'url' => route('stamp_correction_request.list')],
-                            ['type' => 'logout', 'label' => 'ログアウト'],
+                            ['type' => 'link', 'label' => '申請一覧', 'url' => $requestListUrl],
+                            ['type' => 'logout', 'label' => 'ログアウト', 'route' => route('logout')],
                         ];
                     }
                 }
-            @endphp
+            }
+        @endphp
 
-            @if (!empty($navLinks))
-                <nav class="global-nav" aria-label="メインナビゲーション">
-                    <ul class="nav-list">
-                        @foreach ($navLinks as $link)
-                            @if ($link['type'] === 'link')
-                                <li><a href="{{ $link['url'] }}">{{ $link['label'] }}</a></li>
-                            @elseif ($link['type'] === 'logout')
-                                <li>
-                                    <form action="{{ route('logout') }}" method="POST">
-                                        @csrf
-                                        <button type="submit" class="nav-link-button">{{ $link['label'] }}</button>
-                                    </form>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                </nav>
-            @endif
-        @endauth
+        @if (!empty($navLinks))
+            <nav class="global-nav" aria-label="メインナビゲーション">
+                <ul class="nav-list">
+                    @foreach ($navLinks as $link)
+                        @if ($link['type'] === 'link')
+                            <li><a href="{{ $link['url'] }}">{{ $link['label'] }}</a></li>
+                        @elseif ($link['type'] === 'logout' && isset($link['route']))
+                            <li>
+                                <form action="{{ $link['route'] }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="nav-link-button">{{ $link['label'] }}</button>
+                                </form>
+                            </li>
+                        @endif
+                    @endforeach
+                </ul>
+            </nav>
+        @endif
     </div>
 </header>
 

@@ -3,18 +3,20 @@
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController as AdminLoginController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController as UserLoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\AttendanceDetailController;
-use App\Http\Controllers\Auth\RequestListController;
+use App\Http\Controllers\RequestListController;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\Admin\AttendanceDetailController as AdminAttendanceDetailController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Admin\AttendanceListController as AdminAttendanceListController;
+use App\Http\Controllers\Admin\RequestListController as AdminRequestListController;
+use App\Http\Controllers\Admin\RequestApproveController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +130,35 @@ Route::middleware(['auth:admin'])
         // スタッフ一覧（管理者）
         Route::get('/staff/list', [StaffController::class, 'index'])
             ->name('staff.index');
+    });
+
+Route::middleware(['auth:admin'])->group(function () {
+    // スタッフ別月次勤怠一覧（画面）
+    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceListController::class, 'monthlyByUser'])
+        ->name('admin.attendance.staff.monthly');
+    // スタッフ別月次勤怠一覧 CSV 出力
+    Route::get('/admin/attendance/staff/{id}/csv', [AdminAttendanceListController::class, 'exportMonthlyCsv'])
+        ->name('admin.attendance.staff.monthly.csv');
+    });
+
+Route::middleware(['auth:admin'])->group(function (): void {
+    Route::get(
+        '/stamp_correction_request/list',
+        [AdminRequestListController::class, 'index']
+    )->name('admin.stamp_correction_request.list');
+});
+
+Route::middleware(['auth:admin'])
+    ->group(function (): void {
+        // 修正申請承認画面（表示）
+        Route::get('/stamp_correction_request/approve/{correction_request_id}',
+            [RequestApproveController::class, 'show'])
+            ->name('admin.stamp_correction_request.approve.show');
+
+        // 修正申請承認処理
+        Route::post('/stamp_correction_request/approve/{correction_request_id}',
+            [RequestApproveController::class, 'approve'])
+            ->name('admin.stamp_correction_request.approve');
     });
 
 // ログアウト（両者）

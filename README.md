@@ -46,6 +46,8 @@
 - php:8.1
 
 ## ER図
+![ER Diagram](https://github.com/TomoeHayano/attendance-app-test.git/assets/er.png)
+
 ## テーブル仕様書
 
 ### users テーブル（一般ユーザー）
