@@ -150,17 +150,20 @@ Route::middleware(['auth:admin'])->group(function (): void {
 
 Route::middleware(['auth:admin'])
     ->group(function (): void {
+
         // 修正申請承認画面（表示）
-        Route::get('/stamp_correction_request/approve/{correction_request_id}',
-            [RequestApproveController::class, 'show'])
-            ->name('admin.stamp_correction_request.approve.show');
+        Route::get(
+            '/stamp_correction_request/approve/{correction_request_id}',
+            [RequestApproveController::class, 'show']
+        )->name('stamp_correction_request.approve.show');
 
         // 修正申請承認処理
-        Route::post('/stamp_correction_request/approve/{correction_request_id}',
-            [RequestApproveController::class, 'approve'])
-            ->name('admin.stamp_correction_request.approve');
+        Route::post(
+            '/stamp_correction_request/approve/{correction_request_id}',
+            [RequestApproveController::class, 'approve']
+        )->name('stamp_correction_request.approve');
     });
-
+    
 // ログアウト（両者）
 Route::post('/logout', [UserLoginController::class, 'destroy'])->name('logout');
 Route::post('/admin/logout', [AdminLoginController::class, 'destroy'])->name('admin.logout');

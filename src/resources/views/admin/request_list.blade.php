@@ -15,14 +15,14 @@
     <nav class="request-list__tabs" aria-label="申請ステータスタブ">
         <ul class="request-list__tabs-list">
             <li class="request-list__tabs-item">
-                <a href="{{ route('admin.stamp_correction_request.list', ['tab' => 'pending']) }}"
+                <a href="{{ route('stamp_correction_request.list', ['tab' => 'pending']) }}"
                    class="request-list__tab {{ $activeTab === 'pending' ? 'is-active' : '' }}"
                    @if($activeTab === 'pending') aria-current="page" @endif>
                     承認待ち
                 </a>
             </li>
             <li class="request-list__tabs-item">
-                <a href="{{ route('admin.stamp_correction_request.list', ['tab' => 'approved']) }}"
+                <a href="{{ route('stamp_correction_request.list', ['tab' => 'approved']) }}"
                    class="request-list__tab {{ $activeTab === 'approved' ? 'is-active' : '' }}"
                    @if($activeTab === 'approved') aria-current="page" @endif>
                     承認済み
@@ -67,7 +67,7 @@
 
                         {{-- 詳細リンク：管理者用の申請詳細／勤怠詳細画面へ遷移 --}}
                         <td>
-                            <a href="{{ route('admin.stamp_correction_request.approve.show', $requestItem->id) }}">
+                            <a href="{{ route('stamp_correction_request.approve.show', $requestItem->id) }}">
                                 詳細
                             </a>
                         </td>
