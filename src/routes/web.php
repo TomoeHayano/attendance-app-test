@@ -141,27 +141,20 @@ Route::middleware(['auth:admin'])->group(function () {
         ->name('admin.attendance.staff.monthly.csv');
     });
 
-Route::middleware(['auth:admin'])->group(function (): void {
-    Route::get(
-        '/stamp_correction_request/list',
-        [AdminRequestListController::class, 'index']
-    )->name('admin.stamp_correction_request.list');
-});
-
 Route::middleware(['auth:admin'])
+    ->prefix('admin')
+    ->name('admin.')
     ->group(function (): void {
+        Route::get('/stamp_correction_request/list', [AdminRequestListController::class, 'index'])
+            ->name('stamp_correction_request.list');
 
         // 修正申請承認画面（表示）
-        Route::get(
-            '/stamp_correction_request/approve/{correction_request_id}',
-            [RequestApproveController::class, 'show']
-        )->name('stamp_correction_request.approve.show');
+        Route::get('/stamp_correction_request/approve/{correction_request_id}', [RequestApproveController::class, 'show'])
+            ->name('stamp_correction_request.approve.show');
 
         // 修正申請承認処理
-        Route::post(
-            '/stamp_correction_request/approve/{correction_request_id}',
-            [RequestApproveController::class, 'approve']
-        )->name('stamp_correction_request.approve');
+        Route::post('/stamp_correction_request/approve/{correction_request_id}', [RequestApproveController::class, 'approve'])
+            ->name('stamp_correction_request.approve');
     });
     
 // ログアウト（両者）
