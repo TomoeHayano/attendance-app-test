@@ -30,7 +30,7 @@ class RequestListController extends Controller
             ? $approvedRequests
             : $pendingRequests;
 
-        return view('attendance.request_list', [
+        return view('attendance.request-list', [
             'activeTab'       => $activeTab,
             'displayRequests' => $displayRequests,
         ]);

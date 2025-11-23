@@ -68,6 +68,21 @@ class AttendanceListController extends Controller
             $key        = $date->toDateString();
             $attendance = $attendances->get($key);
 
+            // レコードが無い日でも詳細画面へ遷移できるよう、プレースホルダを作成
+            if (! $attendance) {
+                $attendance = Attendance::firstOrCreate(
+                    [
+                        'user_id' => $user->id,
+                        'date'    => $key,
+                    ],
+                    [
+                        'clock_in'  => null,
+                        'clock_out' => null,
+                        'status'    => Attendance::STATUS_OFF_DUTY,
+                    ]
+                );
+            }
+
             $clockInCarbon  = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_in)) : null;
             $clockOutCarbon = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_out)) : null;
 
@@ -81,7 +96,7 @@ class AttendanceListController extends Controller
                 'clock_out'    => $clockOutCarbon ? $clockOutCarbon->format('H:i') : '',
                 'break_time'   => $attendance ? $this->formatMinutes($breakMinutes) : '',
                 'working_time' => $attendance ? $this->formatMinutes($workingMinutes) : '',
-                'detail_id'    => $attendance?->id ?? $key,
+                'detail_id'    => $attendance->id,
             ]);
         }
 
@@ -89,7 +104,7 @@ class AttendanceListController extends Controller
         $prevMonthDate = $targetDate->copy()->subMonthNoOverflow();
         $nextMonthDate = $targetDate->copy()->addMonthNoOverflow();
 
-        return view('admin.user_list', [
+        return view('admin.user-list', [
             'user'           => $user,
             'attendanceRows' => $attendanceRows,
             'targetDate'     => $targetDate,
@@ -125,6 +140,11 @@ class AttendanceListController extends Controller
             ->where('user_id', $user->id)
             ->whereYear(self::DATE_COLUMN, $targetDate->year)
             ->whereMonth(self::DATE_COLUMN, $targetDate->month)
+            // 打刻がある日のみに限定（プレースホルダを除外）
+            ->where(function ($query): void {
+                $query->whereNotNull('clock_in')
+                      ->orWhereNotNull('clock_out');
+            })
             ->orderBy(self::DATE_COLUMN)
             ->get();
 

@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use App\Models\CorrectionRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class RequestApproveController extends Controller
 {
@@ -20,11 +20,6 @@ class RequestApproveController extends Controller
             'attendance.user',
             'correctionBreaks',
         ])->findOrFail($correction_request_id);
-
-        // 承認済みは表示させない
-        if ($correctionRequest->status !== 0) {
-            abort(404);
-        }
 
         return view('admin.approve', [
             'correctionRequest' => $correctionRequest,
@@ -43,29 +38,29 @@ class RequestApproveController extends Controller
             $correctionRequest = CorrectionRequest::with([
                 'attendance',
                 'correctionBreaks',
-            ])->lockForUpdate()
-            ->findOrFail($correction_request_id);
+            ])->lockForUpdate()->findOrFail($correction_request_id);
 
-            if ($correctionRequest->status !== 0) {
+            // ▼ 正しい「承認待ち」チェック（1でなければ何もしない）
+            if ($correctionRequest->status !== CorrectionRequest::STATUS_PENDING) {
                 return;
             }
 
             $attendance = $correctionRequest->attendance;
 
             /**
-             * 1) 勤怠(attendances)の上書き
+             * 1) 勤怠情報の上書き
              */
             $attendance->clock_in  = $correctionRequest->corrected_clock_in;
             $attendance->clock_out = $correctionRequest->corrected_clock_out;
             $attendance->save();
 
             /**
-             * 2) 休憩(break_records)の上書き
+             * 2) 休憩の上書き
              */
-            $attendance->breaks()->delete();
+            $attendance->breakRecords()->delete();
 
             foreach ($correctionRequest->correctionBreaks as $cb) {
-                $attendance->breaks()->create([
+                $attendance->breakRecords()->create([
                     'attendance_id' => $attendance->id,
                     'break_start'   => $cb->corrected_break_start,
                     'break_end'     => $cb->corrected_break_end,
@@ -75,14 +70,12 @@ class RequestApproveController extends Controller
             /**
              * 3) 修正申請のステータス更新
              */
-            $correctionRequest->status      = 1; // 承認済み
-            $correctionRequest->approved_by = Auth::id(); // 管理者ID
+            $correctionRequest->status      = CorrectionRequest::STATUS_APPROVED; // ここを「2」扱いに
+            $correctionRequest->approved_by = Auth::id();
             $correctionRequest->approved_at = now();
             $correctionRequest->save();
         });
 
-        return redirect()
-            ->route('admin.stamp_correction_request.list', ['tab' => 'approved'])
-            ->with('status', '修正申請を承認しました。');
+        return redirect()->route('admin.stamp_correction_request.list', ['tab' => 'approved']);
     }
 }

@@ -19,27 +19,50 @@ class AttendanceDetailController extends Controller
         $attendance = Attendance::with(['user', 'breakRecords', 'correctionRequests'])
             ->findOrFail($id);
 
-        $hasPendingRequest = $attendance->correctionRequests()
+        $pendingCorrectionRequest = $attendance->correctionRequests()
             ->where('status', CorrectionRequest::STATUS_PENDING)
-            ->exists();
+            ->with('correctionBreaks')
+            ->latest()
+            ->first();
+
+        $hasPendingRequest = (bool) $pendingCorrectionRequest;
 
         /** @var \Illuminate\Support\Collection<int, \App\Models\BreakRecord> $breakRecords */
-        $breakRecords = $attendance->breakRecords()
-            ->orderBy('break_start')
-            ->get();
+        if ($pendingCorrectionRequest) {
+            $breakRecords = $pendingCorrectionRequest->correctionBreaks
+                ->sortBy('corrected_break_start')
+                ->values()
+                ->map(static function ($break) {
+                    return (object) [
+                        'break_start' => $break->corrected_break_start,
+                        'break_end'   => $break->corrected_break_end,
+                    ];
+                });
+        } else {
+            $breakRecords = $attendance->breakRecords()
+                ->orderBy('break_start')
+                ->get();
+        }
 
-        return $this->renderDetailView($attendance, $breakRecords, $hasPendingRequest);
+        return $this->renderDetailView(
+            $attendance,
+            $breakRecords,
+            $hasPendingRequest,
+            $pendingCorrectionRequest
+        );
     }
 
     private function renderDetailView(
         Attendance $attendance,
         Collection $breakRecords,
-        bool $hasPendingRequest
+        bool $hasPendingRequest,
+        ?CorrectionRequest $pendingCorrectionRequest
     ): View {
         return view('admin.detail', [
             'attendance'        => $attendance,
             'breakRecords'      => $breakRecords,
             'hasPendingRequest' => $hasPendingRequest,
+            'pendingCorrectionRequest' => $pendingCorrectionRequest,
         ]);
     }
 
@@ -83,7 +106,7 @@ class AttendanceDetailController extends Controller
         });
 
         return redirect()
-            ->route('admin.attendance.detail', ['id' => $attendance->id])
+            ->route('admin.attendance.staff.monthly', ['id' => $attendance->user_id])
             ->with('status', '勤怠情報を修正しました。');
     }
 }

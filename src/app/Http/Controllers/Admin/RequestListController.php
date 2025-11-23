@@ -36,7 +36,7 @@ class RequestListController extends Controller
             ? $approvedRequests
             : $pendingRequests;
 
-        return view('admin.request_list', [
+        return view('admin.request-list', [
             'activeTab'       => $activeTab,
             'displayRequests' => $displayRequests,
         ]);

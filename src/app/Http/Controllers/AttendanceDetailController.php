@@ -39,21 +39,48 @@ class AttendanceDetailController extends Controller
             ->where('user_id', auth()->id())
             ->findOrFail((int) $id);
 
-        $hasPendingRequest = $attendance->correctionRequests()
+        $pendingCorrectionRequest = $attendance->correctionRequests()
             ->where('status', CorrectionRequest::STATUS_PENDING)
-            ->exists();
+            ->with('correctionBreaks')
+            ->latest()
+            ->first();
 
-        $breakRecords = $attendance->breakRecords()->orderBy('break_start')->get();
+        $hasPendingRequest = (bool) $pendingCorrectionRequest;
 
-        return $this->renderDetailView($attendance, $breakRecords, $hasPendingRequest);
+        if ($pendingCorrectionRequest) {
+            // 申請中は修正内容をそのまま閲覧できるようにする
+            $breakRecords = $pendingCorrectionRequest->correctionBreaks
+                ->sortBy('corrected_break_start')
+                ->values()
+                ->map(static function ($break) {
+                    return (object) [
+                        'break_start' => $break->corrected_break_start,
+                        'break_end'   => $break->corrected_break_end,
+                    ];
+                });
+        } else {
+            $breakRecords = $attendance->breakRecords()->orderBy('break_start')->get();
+        }
+
+        return $this->renderDetailView(
+            $attendance,
+            $breakRecords,
+            $hasPendingRequest,
+            $pendingCorrectionRequest
+        );
     }
 
-    private function renderDetailView(Attendance $attendance, Collection $breakRecords, bool $hasPendingRequest)
-    {
+    private function renderDetailView(
+        Attendance $attendance,
+        Collection $breakRecords,
+        bool $hasPendingRequest,
+        ?CorrectionRequest $pendingCorrectionRequest = null
+    ) {
         return view('attendance.detail', [
-            'attendance'        => $attendance,
-            'breakRecords'      => $breakRecords,
-            'hasPendingRequest' => $hasPendingRequest,
+            'attendance'                => $attendance,
+            'breakRecords'              => $breakRecords,
+            'hasPendingRequest'         => $hasPendingRequest,
+            'pendingCorrectionRequest'  => $pendingCorrectionRequest,
         ]);
     }
 
