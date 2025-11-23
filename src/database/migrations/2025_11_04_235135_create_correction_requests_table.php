@@ -25,7 +25,7 @@ return new class extends Migration
             $table->time('corrected_clock_out')->nullable();
 
             $table->string('remarks', 255);
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(1);
 
             $table->foreignId('approved_by')
                 ->nullable()

@@ -27,13 +27,11 @@
     <section class="attendance-detail__inner">
         <h1 class="attendance-detail__title">勤怠詳細</h1>
 
-        @if (session('status'))
-            <p class="attendance-detail__flash">{{ session('status') }}</p>
-        @endif
-
         {{-- 修正可否フラグ --}}
         @php
             $readonly = $hasPendingRequest;
+            $displayClockIn  = $pendingCorrectionRequest?->corrected_clock_in ?? $attendance->clock_in;
+            $displayClockOut = $pendingCorrectionRequest?->corrected_clock_out ?? $attendance->clock_out;
         @endphp
 
         <form
@@ -82,7 +80,7 @@
                                             type="text"
                                             name="clock_in"
                                             class="attendance-detail__time-input"
-                                            value="{{ old('clock_in', $formatTime($attendance->clock_in)) }}"
+                                            value="{{ old('clock_in', $formatTime($displayClockIn)) }}"
                                             inputmode="numeric"
                                             data-normalize-time
                                             @if($readonly) readonly @endif
@@ -94,7 +92,7 @@
                                             type="text"
                                             name="clock_out"
                                             class="attendance-detail__time-input"
-                                            value="{{ old('clock_out', $formatTime($attendance->clock_out)) }}"
+                                            value="{{ old('clock_out', $formatTime($displayClockOut)) }}"
                                             inputmode="numeric"
                                             data-normalize-time
                                             @if($readonly) readonly @endif
@@ -125,7 +123,9 @@
                             <td>
                                 <div class="attendance-detail__field-group">
                                     <div class="attendance-detail__time-row">
-                                        <input type="hidden" name="breakRecords[{{ $index }}][required]" value="1">
+                                        @if ($index === 0)
+                                            <input type="hidden" name="breakRecords[{{ $index }}][required]" value="1">
+                                        @endif
                                         <div class="attendance-detail__time-field">
                                             <input
                                                 type="text"
@@ -163,55 +163,55 @@
                     @endforeach
 
                     {{-- 休憩：追加で1行分の空フィールド --}}
-                    @php
-                        $newIndex = $breakRecords->count();
-                        $nextOrder = $newIndex + 1;
-                    @endphp
-                    @php
-                        $newBreakMessages = collect($errors->get("breakRecords.$newIndex.start"))
-                            ->merge($errors->get("breakRecords.$newIndex.end"))
-                            ->unique()
-                            ->values();
-                    @endphp
-                    <tr>
-                        <th scope="row">{{ $breakLabel($nextOrder) }}</th>
-                        <td>
-                            <div class="attendance-detail__field-group">
-                                <div class="attendance-detail__time-row">
-                                    <div class="attendance-detail__time-field">
-                                        <input
-                                            type="text"
-                                            name="breakRecords[{{ $newIndex }}][start]"
-                                            class="attendance-detail__time-input"
-                                            value="{{ old("breakRecords.$newIndex.start") }}"
-                                            inputmode="numeric"
-                                            data-normalize-time
-                                            @if($readonly) readonly @endif
-                                        >
+                    @unless($readonly)
+                        @php
+                            $newIndex = $breakRecords->count();
+                            $nextOrder = $newIndex + 1;
+                        @endphp
+                        @php
+                            $newBreakMessages = collect($errors->get("breakRecords.$newIndex.start"))
+                                ->merge($errors->get("breakRecords.$newIndex.end"))
+                                ->unique()
+                                ->values();
+                        @endphp
+                        <tr>
+                            <th scope="row">{{ $breakLabel($nextOrder) }}</th>
+                            <td>
+                                <div class="attendance-detail__field-group">
+                                    <div class="attendance-detail__time-row">
+                                        <div class="attendance-detail__time-field">
+                                            <input
+                                                type="text"
+                                                name="breakRecords[{{ $newIndex }}][start]"
+                                                class="attendance-detail__time-input"
+                                                value="{{ old("breakRecords.$newIndex.start") }}"
+                                                inputmode="numeric"
+                                                data-normalize-time
+                                            >
+                                        </div>
+                                        <span class="attendance-detail__time-separator">〜</span>
+                                        <div class="attendance-detail__time-field">
+                                            <input
+                                                type="text"
+                                                name="breakRecords[{{ $newIndex }}][end]"
+                                                class="attendance-detail__time-input"
+                                                value="{{ old("breakRecords.$newIndex.end") }}"
+                                                inputmode="numeric"
+                                                data-normalize-time
+                                            >
+                                        </div>
                                     </div>
-                                    <span class="attendance-detail__time-separator">〜</span>
-                                    <div class="attendance-detail__time-field">
-                                        <input
-                                            type="text"
-                                            name="breakRecords[{{ $newIndex }}][end]"
-                                            class="attendance-detail__time-input"
-                                            value="{{ old("breakRecords.$newIndex.end") }}"
-                                            inputmode="numeric"
-                                            data-normalize-time
-                                            @if($readonly) readonly @endif
-                                        >
-                                    </div>
+                                    @if ($newBreakMessages->isNotEmpty())
+                                        <div class="attendance-detail__error-list">
+                                            @foreach ($newBreakMessages as $message)
+                                                <p class="form__error">{{ $message }}</p>
+                                            @endforeach
+                                        </div>
+                                    @endif
                                 </div>
-                                @if ($newBreakMessages->isNotEmpty())
-                                    <div class="attendance-detail__error-list">
-                                        @foreach ($newBreakMessages as $message)
-                                            <p class="form__error">{{ $message }}</p>
-                                        @endforeach
-                                    </div>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                    @endunless
 
                     {{-- 備考 --}}
                     <tr>
@@ -224,7 +224,7 @@
                                     maxlength="500"
                                     data-autosize
                                     @if($readonly) readonly @endif
-                                >{{ old('remarks') }}</textarea>
+                                >{{ old('remarks', $pendingCorrectionRequest->remarks ?? $attendance->remarks) }}</textarea>
                                 @error('remarks')
                                     <div class="attendance-detail__error-list">
                                         <p class="form__error">{{ $message }}</p>

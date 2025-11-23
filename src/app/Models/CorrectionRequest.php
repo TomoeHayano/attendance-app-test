@@ -13,7 +13,6 @@ class CorrectionRequest extends Model
 
     public const STATUS_PENDING  = 1; // 承認待ち
     public const STATUS_APPROVED = 2; // 承認済み
-    // public const STATUS_REJECTED = 3; // 差戻し 等あれば
 
     /**
      * @var array<int, string>
@@ -27,6 +26,14 @@ class CorrectionRequest extends Model
         'status',
         'approved_by',
         'approved_at',
+    ];
+
+    protected $attributes = [
+        'status' => self::STATUS_PENDING,
+    ];
+
+    protected $casts = [
+        'status' => 'integer',
     ];
 
     public function attendance(): BelongsTo
@@ -49,7 +56,6 @@ class CorrectionRequest extends Model
         return match ($this->status) {
             self::STATUS_PENDING  => '承認待ち',
             self::STATUS_APPROVED => '承認済み',
-            // self::STATUS_REJECTED => '差戻し',
             default               => '不明',
         };
     }

@@ -126,6 +126,19 @@ class AttendanceDetailUpdateRequest extends FormRequest
 
                 $isRequired = !empty($breakRecord['required']);
 
+                // どちらか一方だけ入力されている場合もエラー
+                if (($start !== null && $end === null) || ($start === null && $end !== null)) {
+                    $validator->errors()->add(
+                        "breakRecords.$index.start",
+                        '休憩時間が不適切な値です'
+                    );
+                    $validator->errors()->add(
+                        "breakRecords.$index.end",
+                        '休憩時間が不適切な値です'
+                    );
+                    continue;
+                }
+
                 if ($isRequired && ($start === null || $end === null)) {
                     $validator->errors()->add(
                         "breakRecords.$index.start",

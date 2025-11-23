@@ -14,12 +14,13 @@
             $navLinks = [];
             $currentRouteName = optional(request()->route())->getName();
             $isAdminGuard = auth('admin')->check();
+            $isAdminLoginScreen = (! $isAdminGuard) && request()->routeIs('admin.login');
             $isAdminScreen = $isAdminGuard
                 || request()->routeIs('admin.*')
                 || request()->is('admin')
                 || request()->is('admin/*');
 
-            if ($isAdminScreen) {
+            if ($isAdminScreen && ! $isAdminLoginScreen) {
                 $navLinks = [
                     ['type' => 'link', 'label' => '勤怠一覧', 'url' => route('admin.attendance.daily')],
                     ['type' => 'link', 'label' => 'スタッフ一覧', 'url' => route('admin.staff.index')],

@@ -44,7 +44,7 @@
                 {{-- 休憩 --}}
                 @foreach ($breakRecords as $i => $br)
                 <tr>
-                    <th>休憩{{ $i+1 }}</th>
+                    <th>{{ $i === 0 ? '休憩' : '休憩' . ($i + 1) }}</th>
                     <td>
                         {{ $formatTime($br->corrected_break_start) }}
                         〜
@@ -62,21 +62,24 @@
         </table>
 
         {{-- 承認 --}}
-        <form action="{{ route('admin.stamp_correction_request.approve', $correctionRequest->id) }}" method="post">
-            @csrf
-            <div class="attendance-detail__footer">
-                <button type="submit" class="attendance-detail__submit"
-                    onclick="return confirm('承認後は取り消しできません。承認しますか？');">
-                    承認する
+        <div class="attendance-detail__footer">
+
+            @if ($correctionRequest->status === 1)
+                {{-- 承認待ち：承認ボタン（POST） --}}
+                <form action="{{ route('admin.stamp_correction_request.approve', $correctionRequest->id) }}" method="post">
+                    @csrf
+                    <button type="submit" class="attendance-detail__submit">
+                        承認
+                    </button>
+                </form>
+            @else
+                {{-- 承認済み：ボタンを無効化 --}}
+                <button type="button" class="attendance-detail__submit" disabled>
+                    承認済み
                 </button>
+            @endif
 
-                <a href="{{ route('admin.stamp_correction_request.list', ['tab'=>'pending']) }}"
-                   class="attendance-detail__back-link">
-                   一覧に戻る
-                </a>
-            </div>
-        </form>
-
+        </div>
     </section>
 </main>
 @endsection

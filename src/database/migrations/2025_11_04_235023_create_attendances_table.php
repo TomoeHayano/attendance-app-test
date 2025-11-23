@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('date');
             $table->time('clock_in')->nullable();
             $table->time('clock_out')->nullable();
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
             $table->unique(['user_id', 'date'], 'attendances_user_date_unique');
         });

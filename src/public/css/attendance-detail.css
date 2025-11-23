@@ -190,11 +190,6 @@
     cursor: pointer;
 }
 
-.attendance-detail__pending-message {
-    font-size: 14px;
-    letter-spacing: 0.15em;
-}
-
 /* ========== Responsive (PC：1400-1540px) ========== */
 @media screen and (min-width: 1400px) and (max-width: 1540px) {
     .attendance-detail {
