@@ -195,6 +195,49 @@ class AdminDetailUpdateRequest extends FormRequest
                     }
                 }
             }
+
+            // ▼ 休憩2以降の時系列・重複チェック
+            $completeBreaks = [];
+            foreach ($breakRecords as $index => $breakRecord) {
+                $start = $breakRecord['start'] ?? null;
+                $end   = $breakRecord['end'] ?? null;
+
+                if ($start === null || $end === null || $start === '' || $end === '') {
+                    continue;
+                }
+
+                $completeBreaks[] = [
+                    'start' => $start,
+                    'end'   => $end,
+                    'index' => $index,
+                ];
+            }
+
+            $prevEnd    = null;
+            $seenBreaks = [];
+
+            foreach ($completeBreaks as $break) {
+                $idx   = $break['index'];
+                $start = $break['start'];
+                $end   = $break['end'];
+
+                if ($prevEnd !== null && $start < $prevEnd) {
+                    $validator->errors()->add("breakRecords.$idx.start", '休憩時間が不適切な値です');
+                    $validator->errors()->add("breakRecords.$idx.end", '休憩時間が不適切な値です');
+                }
+
+                foreach ($seenBreaks as $prev) {
+                    $overlap = ($start < $prev['end']) && ($end > $prev['start']);
+                    if ($overlap) {
+                        $validator->errors()->add("breakRecords.$idx.start", '休憩時間が重複しています');
+                        $validator->errors()->add("breakRecords.$idx.end", '休憩時間が重複しています');
+                        break;
+                    }
+                }
+
+                $seenBreaks[] = $break;
+                $prevEnd      = $end;
+            }
         });
     }
 }
