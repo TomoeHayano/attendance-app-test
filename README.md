@@ -46,7 +46,7 @@
 - php:8.1
 
 ## ER図
-![ER Diagram](https://github.com/TomoeHayano/attendance-app-test.git/assets/er.png)
+![attendance-app ER図](/er.png)
 
 ## テーブル仕様書
 

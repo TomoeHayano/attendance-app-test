@@ -22,7 +22,7 @@
   position: absolute;
   width: 144px;
   height: 44px;
-  left: calc(50% - 144px / 2);
+  left: 684px;
   top: calc(50% - 44px / 2 - 308px);
   font-weight: 700;
   font-size: 36px;

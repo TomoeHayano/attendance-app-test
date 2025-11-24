@@ -105,45 +105,59 @@
 /* ========== Responsive (PC：1400-1540px) ========== */
 @media screen and (min-width: 1400px) and (max-width: 1540px) {
     .attendance {
-      width: 1512px;
+      width: 100%;
+      max-width: 1512px;
       height: 982px;
       padding: 0;
+      margin: 0 auto;
       display: block;
     }
 
     .status__pill {
       position: absolute;
-      left: 706px;
+      left: 50%;
       top: 289px;
+      transform: translateX(-50%);
+    }
+
+    .datetime {
+      position: absolute;
+      left: 50%;
+      top: 361px;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .datetime__date {
-      position: absolute;
-      left: 590px;
-      top: 361px;
-      width: 332px;
+      position: static;
+      width: auto;
+      min-width: 332px;
       height: 48px;
+      text-align: center;
+      white-space: nowrap;
+      margin: 0 0 32px;
     }
 
     .datetime__time {
-      position: absolute;
-      left: 635px;
-      top: 441px;
+      position: static;
       width: 242px;
       height: 97px;
       margin: 0;
+      text-align: center;
     }
 
     .actions__grid {
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 50%;
       top: 625px;
       display: flex;
       flex-wrap: nowrap;
       justify-content: center;
       gap: 82px;
       width: auto;
+      transform: translateX(-50%);
     }
 
     .action-form { width: auto; }
@@ -151,9 +165,10 @@
 
     .actions__message {
       position: absolute;
-      left: 0;
-      right: 0;
+      left: 50%;
       top: 720px;
+      transform: translateX(calc(-50% + 16px)); /* 文字を16px分右寄せ */
       margin-top: 0;
+      text-align: center;
     }
 }

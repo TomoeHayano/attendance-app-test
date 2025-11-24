@@ -30,7 +30,7 @@ class AttendanceController extends Controller
             'now'            => $now,
             'displayDate'    => $this->formatJapaneseDate($now),
             'statusLabel'    => $statusLabel,
-            'canClockIn'     => $attendance === null,
+            'canClockIn'     => $attendance === null || $attendance->status === Attendance::STATUS_OFF_DUTY,
             'canBreakStart'  => $attendance?->status === Attendance::STATUS_WORKING,
             'canBreakEnd'    => $attendance?->status === Attendance::STATUS_ON_BREAK,
             'canClockOut'    => $attendance?->status === Attendance::STATUS_WORKING,
@@ -50,21 +50,28 @@ class AttendanceController extends Controller
         return DB::transaction(function () use ($request, $todayDate, $currentTime): RedirectResponse {
             $userId = (int) $request->user()->id;
 
-            $alreadyExists = Attendance::where('user_id', $userId)
+            $attendance = Attendance::where('user_id', $userId)
                 ->whereDate('date', $todayDate)
-                ->exists();
+                ->lockForUpdate()
+                ->first();
 
-            if ($alreadyExists) {
+            // status=0（勤務外）は未出勤扱いとして上書き許可
+            if ($attendance === null) {
+                Attendance::create([
+                    'user_id'  => $userId,
+                    'date'     => $todayDate,
+                    'clock_in' => $currentTime,
+                    'status'   => Attendance::STATUS_WORKING,
+                ]);
+            } elseif ((int) $attendance->status === Attendance::STATUS_OFF_DUTY) {
+                $attendance->update([
+                    'clock_in' => $currentTime,
+                    'status'   => Attendance::STATUS_WORKING,
+                ]);
+            } else {
                 return redirect()->route('attendance.action')
                     ->withErrors(['attendance' => '本日は既に出勤済みです。']);
             }
-
-            Attendance::create([
-                'user_id'  => $userId,
-                'date'     => $todayDate,
-                'clock_in' => $currentTime,
-                'status'   => Attendance::STATUS_WORKING,
-            ]);
 
             return redirect()->route('attendance.action');
         });
