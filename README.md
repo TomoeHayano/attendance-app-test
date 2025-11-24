@@ -149,8 +149,7 @@ STRIPE_KEY・STRIPE_SECRET　は未設定のため、KEYの取得をお願いい
 テスト実行環境はDockerコンテナ内で完結します。
 
 ### 初期設定
-- docker-compose exec php bash
-- mysql -u root -p<br>
+- docker compose exec mysql mysql -u root -p<br>
 ※ パスワード: root
 - CREATE DATABASE demo_test;
 - exit
