@@ -31,7 +31,6 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
         Auth::login($user);
 
-        // FN005：登録直後に打刻画面へ
         return redirect()->route('attendance.clock');
     }
 }

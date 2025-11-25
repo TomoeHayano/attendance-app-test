@@ -55,7 +55,6 @@ class AttendanceController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            // status=0（勤務外）は未出勤扱いとして上書き許可
             if ($attendance === null) {
                 Attendance::create([
                     'user_id'  => $userId,

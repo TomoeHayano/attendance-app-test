@@ -58,7 +58,6 @@ class AdminDetailUpdateRequest extends FormRequest
             return '';
         }
 
-        // 全角数字 → 半角数字＋半角コロンへ揃える
         $normalized = mb_convert_kana($normalized, 'na', 'UTF-8');
         $normalized = str_replace('：', ':', $normalized);
 
@@ -67,8 +66,7 @@ class AdminDetailUpdateRequest extends FormRequest
 
     public function authorize(): bool
     {
-        // 一般ユーザー版は auth()->check()
-        // 管理者版は admin ガードを利用
+
         return auth('admin')->check();
     }
 
@@ -78,16 +76,14 @@ class AdminDetailUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // 出勤・退勤（一般ユーザーと同じく必須扱い）
+
             'clock_in'  => ['required', 'date_format:H:i'],
             'clock_out' => ['required', 'date_format:H:i'],
 
-            // 休憩（配列想定）
             'breakRecords'         => ['array'],
             'breakRecords.*.start' => ['nullable', 'date_format:H:i', 'regex:/^\d{2}:\d{2}$/'],
             'breakRecords.*.end'   => ['nullable', 'date_format:H:i', 'regex:/^\d{2}:\d{2}$/'],
 
-            // 備考
             'remarks' => ['required', 'string', 'max:255'],
         ];
     }
@@ -121,7 +117,6 @@ class AdminDetailUpdateRequest extends FormRequest
             $clockIn  = $this->input('clock_in');   // "HH:MM"
             $clockOut = $this->input('clock_out');  // "HH:MM"
 
-            // 1. 出勤 > 退勤 / 退勤 < 出勤 の場合（どちらも同じ条件）
             if ($clockIn !== null && $clockOut !== null && $clockIn >= $clockOut) {
                 $validator->errors()->add('clock_in', '出勤時間もしくは退勤時間が不適切な値です');
                 $validator->errors()->add('clock_out', '出勤時間もしくは退勤時間が不適切な値です');
@@ -131,15 +126,14 @@ class AdminDetailUpdateRequest extends FormRequest
             $breakRecords = $this->input('breakRecords', []);
 
             foreach ($breakRecords as $index => $breakRecord) {
-                $start = $breakRecord['start'] ?? null; // 休憩開始
-                $end   = $breakRecord['end'] ?? null;   // 休憩終了
+                $start = $breakRecord['start'] ?? null;
+                $end   = $breakRecord['end'] ?? null;
 
                 $start = $start === '' ? null : $start;
                 $end   = $end === '' ? null : $end;
 
                 $isRequired = ! empty($breakRecord['required']);
 
-                // どちらか一方だけ入力されている場合もエラー
                 if (($start !== null && $end === null) || ($start === null && $end !== null)) {
                     $validator->errors()->add(
                         "breakRecords.$index.start",
@@ -164,12 +158,10 @@ class AdminDetailUpdateRequest extends FormRequest
                     continue;
                 }
 
-                // 何も入ってなければスキップ
                 if ($start === null && $end === null) {
                     continue;
                 }
 
-                // 2. 休憩開始 < 出勤  または  休憩開始 > 退勤
                 if ($start !== null) {
                     if (
                         ($clockIn !== null && $start < $clockIn) ||
@@ -182,7 +174,6 @@ class AdminDetailUpdateRequest extends FormRequest
                     }
                 }
 
-                // 3. 休憩終了 が 休憩開始より前 または 退勤より後
                 if ($end !== null) {
                     if (
                         ($start !== null && $end < $start) ||
@@ -196,7 +187,7 @@ class AdminDetailUpdateRequest extends FormRequest
                 }
             }
 
-            // ▼ 休憩2以降の時系列・重複チェック
+            //休憩2以降
             $completeBreaks = [];
             foreach ($breakRecords as $index => $breakRecord) {
                 $start = $breakRecord['start'] ?? null;

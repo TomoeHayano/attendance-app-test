@@ -160,4 +160,4 @@ STRIPE_KEY・STRIPE_SECRET　は未設定のため、KEYの取得をお願いい
 
 ### 実行手順
 - docker-compose exec php bash
-- php artisan test tests/Feature/＊各ファイル名＊
+- php artisan test --filter=＊各ファイル名＊

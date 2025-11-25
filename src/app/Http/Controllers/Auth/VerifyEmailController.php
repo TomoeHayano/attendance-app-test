@@ -34,13 +34,12 @@ class VerifyEmailController extends Controller
     public function send(Request $request): RedirectResponse
     {
         if ($request->user()->hasVerifiedEmail()) {
-            // 既に認証済みならホーム等に飛ばす
-            return redirect()->route('attendance.index'); // ★行き先はアプリに合わせて
+ 
+            return redirect()->route('attendance.index');
         }
 
         $request->user()->sendEmailVerificationNotification();
 
-        // セッションにフラグを立てる → 同じ画面でボタン非表示に使う
         return back()->with('status', 'verification-link-sent');
     }
 

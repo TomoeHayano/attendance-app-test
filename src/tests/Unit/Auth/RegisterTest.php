@@ -25,10 +25,10 @@ class RegisterTest extends TestCase
         $response->assertRedirect('/register');
 
         $response->assertSessionHasErrors([
-            'name' => 'お名前を入力してください',
+            'name' => 'ユーザー名を入力してください',
         ]);
     }
-
+    
     /**
      * メールアドレスが未入力の場合、バリデーションメッセージが表示される
      */
@@ -82,7 +82,7 @@ class RegisterTest extends TestCase
         $response->assertRedirect('/register');
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードと一致しません',
+            'password_confirmation' => '確認用パスワードが一致しません',
         ]);
     }
 

@@ -48,7 +48,6 @@ class AttendanceDetailController extends Controller
         $hasPendingRequest = (bool) $pendingCorrectionRequest;
 
         if ($pendingCorrectionRequest) {
-            // 申請中は修正内容をそのまま閲覧できるようにする
             $breakRecords = $pendingCorrectionRequest->correctionBreaks
                 ->sortBy('corrected_break_start')
                 ->values()
@@ -88,7 +87,6 @@ class AttendanceDetailController extends Controller
     {
         $attendance = Attendance::where('user_id', auth()->id())->findOrFail($id);
 
-        // すでに承認待ちがある場合は弾く
         if ($attendance->correctionRequests()
             ->where('status', CorrectionRequest::STATUS_PENDING)
             ->exists()

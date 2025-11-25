@@ -26,7 +26,6 @@ class AttendanceListController extends Controller
 
         $now = Carbon::now();
 
-        // クエリから対象年月を取得（なければ現在年月）
         $year  = $this->resolveIntQuery($request, 'year', $now->year);
         $month = $this->resolveIntQuery($request, 'month', $now->month);
 
@@ -34,10 +33,8 @@ class AttendanceListController extends Controller
             $month = $now->month;
         }
 
-        // 表示中の月（当月扱い）
         $targetDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
 
-        // 当月の勤怠データ（休憩レコードも一緒に取得）
         $attendances = Attendance::query()
             ->with('breakRecords')
             ->where('user_id', $userId)
@@ -83,7 +80,6 @@ class AttendanceListController extends Controller
             ]);
         }
 
-        // 前月・翌月
         $prevMonthDate = $targetDate->copy()->subMonthNoOverflow();
         $nextMonthDate = $targetDate->copy()->addMonthNoOverflow();
 
@@ -131,7 +127,6 @@ class AttendanceListController extends Controller
 
         $timeString = (string) $time;
 
-        // 秒あり・秒なしどちらにも対応
         if (preg_match('/^\d{2}:\d{2}:\d{2}$/', $timeString) === 1) {
             return Carbon::createFromFormat('H:i:s', $timeString);
         }

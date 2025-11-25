@@ -7,6 +7,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property int $attendance_id
+ * @property int $user_id
+ * @property string|null $corrected_clock_in
+ * @property string|null $corrected_clock_out
+ * @property string|null $remarks
+ * @property int $status
+ * @property int|null $approved_by
+ * @property \Illuminate\Support\Carbon|null $approved_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read \App\Models\Attendance $attendance
+ * @property-read \App\Models\User $user
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\CorrectionBreak> $correctionBreaks
+ * @property-read string $statusLabel
+ */
 class CorrectionRequest extends Model
 {
     use HasFactory;
@@ -28,10 +46,12 @@ class CorrectionRequest extends Model
         'approved_at',
     ];
 
+    /** @var array<string, mixed> */
     protected $attributes = [
         'status' => self::STATUS_PENDING,
     ];
 
+    /** @var array<string, string> */
     protected $casts = [
         'status' => 'integer',
     ];
