@@ -13,212 +13,212 @@ use Tests\TestCase;
 
 class AdminAttendanceDetailTest extends TestCase
 {
-    use RefreshDatabase;
+  use RefreshDatabase;
 
-    /**
-     * 管理者ユーザー作成
-     */
-    private function createAdmin(): Admin
-    {
-        $admin = new Admin();
-        $admin->name = '管理者ユーザー';
-        $admin->email = 'admin-detail@example.com';
-        $admin->password = 'password';
-        $admin->save();
+  /**
+   * 管理者ユーザー作成
+   */
+  private function createAdmin(): Admin
+  {
+    $admin           = new Admin();
+    $admin->name     = '管理者ユーザー';
+    $admin->email    = 'admin-detail@example.com';
+    $admin->password = 'password';
+    $admin->save();
 
-        return $admin;
-    }
+    return $admin;
+  }
 
-    /**
-     * 一般ユーザー作成
-     */
-    private function createUser(): User
-    {
-        $user = new User();
-        $user->name = 'テストユーザー';
-        $user->email = 'user-detail@example.com';
-        $user->password = 'password';
-        $user->email_verified_at = Carbon::now(config('app.timezone') ?: 'Asia/Tokyo');
-        $user->save();
+  /**
+   * 一般ユーザー作成
+   */
+  private function createUser(): User
+  {
+    $user                    = new User();
+    $user->name              = 'テストユーザー';
+    $user->email             = 'user-detail@example.com';
+    $user->password          = 'password';
+    $user->email_verified_at = Carbon::now(config('app.timezone') ?: 'Asia/Tokyo');
+    $user->save();
 
-        return $user;
-    }
+    return $user;
+  }
 
-    /**
-     * 勤怠レコード作成
-     */
-    private function createAttendance(User $user): Attendance
-    {
-        return Attendance::create([
-            'user_id'   => $user->id,
-            'date'      => '2025-12-25',
-            'clock_in'  => '09:00:00',
-            'clock_out' => '18:00:00',
-            'status'    => Attendance::STATUS_CLOCKED_OUT,
-        ]);
-    }
+  /**
+   * 勤怠レコード作成
+   */
+  private function createAttendance(User $user): Attendance
+  {
+    return Attendance::create([
+      'user_id'   => $user->id,
+      'date'      => '2025-12-25',
+      'clock_in'  => '09:00:00',
+      'clock_out' => '18:00:00',
+      'status'    => Attendance::STATUS_CLOCKED_OUT,
+    ]);
+  }
 
-    /**
-     * 勤怠詳細画面に表示されるデータが選択したものになっている
-     *
-     * - 管理者でログイン
-     * - /admin/attendance/{id} を開く
-     * - 名前／出勤／退勤が一致していることを確認
-     */
-    public function test_admin_detail_page_shows_selected_attendance(): void
-    {
-        $timezone = config('app.timezone') ?: 'Asia/Tokyo';
-        Carbon::setTestNow(Carbon::create(2025, 12, 25, 9, 0, 0, $timezone));
+  /**
+   * 勤怠詳細画面に表示されるデータが選択したものになっている
+   *
+   * - 管理者でログイン
+   * - /admin/attendance/{id} を開く
+   * - 名前／出勤／退勤が一致していることを確認
+   */
+  public function test_admin_detail_page_shows_selected_attendance(): void
+  {
+    $timezone = config('app.timezone') ?: 'Asia/Tokyo';
+    Carbon::setTestNow(Carbon::create(2025, 12, 25, 9, 0, 0, $timezone));
 
-        $admin = $this->createAdmin();
-        $user = $this->createUser();
-        $attendance = $this->createAttendance($user);
+    $admin      = $this->createAdmin();
+    $user       = $this->createUser();
+    $attendance = $this->createAttendance($user);
 
-        $this->actingAs($admin, 'admin');
+    $this->actingAs($admin, 'admin');
 
-        // 管理者用 勤怠詳細画面
-        // URL は実装に合わせている想定（admin/attendance/{attendance}）
-        $response = $this->get('/admin/attendance/' . $attendance->id);
+    // 管理者用 勤怠詳細画面
+    // URL は実装に合わせている想定（admin/attendance/{attendance}）
+    $response = $this->get('/admin/attendance/' . $attendance->id);
 
-        $response->assertOk();
+    $response->assertOk();
 
-        // ユーザー名・出勤・退勤時刻が表示されていること
-        $response->assertSee('テストユーザー');
-        $response->assertSee('09:00');
-        $response->assertSee('18:00');
-        // 日付表示形式は実装依存のため、ここではあえて細かくチェックしない
-    }
+    // ユーザー名・出勤・退勤時刻が表示されていること
+    $response->assertSee('テストユーザー');
+    $response->assertSee('09:00');
+    $response->assertSee('18:00');
+    // 日付表示形式は実装依存のため、ここではあえて細かくチェックしない
+  }
 
-    /**
-     * Request バリデーション用ヘルパ
-     *
-     * AttendanceDetailUpdateRequest に対して Validator を実行し、
-     * withValidator() の追加チェックも反映させる。
-     */
-    private function makeAttendanceDetailValidator(array $data)
-    {
-        $request = new AttendanceDetailUpdateRequest();
+  /**
+   * Request バリデーション用ヘルパ
+   *
+   * AttendanceDetailUpdateRequest に対して Validator を実行し、
+   * withValidator() の追加チェックも反映させる。
+   */
+  private function makeAttendanceDetailValidator(array $data)
+  {
+    $request = new AttendanceDetailUpdateRequest();
 
-        // フォーム入力をセット（input() で参照される）
-        $request->replace($data);
+    // フォーム入力をセット（input() で参照される）
+    $request->replace($data);
 
-        $validator = Validator::make(
-            $request->all(),
-            $request->rules(),
-            $request->messages()
-        );
+    $validator = Validator::make(
+      $request->all(),
+      $request->rules(),
+      $request->messages()
+    );
 
-        // カスタムバリデーション（withValidator）を適用
-        $request->withValidator($validator);
+    // カスタムバリデーション（withValidator）を適用
+    $request->withValidator($validator);
 
-        return $validator;
-    }
+    return $validator;
+  }
 
-    /**
-     * 出勤時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     *
-     * 「出勤時間もしくは退勤時間が不適切な値です」
-     */
-    public function test_error_when_clock_in_is_after_clock_out_for_admin(): void
-    {
-        $data = [
-            'clock_in'  => '18:00',
-            'clock_out' => '09:00',
-            'breakRecords' => [],
-            'remarks'   => 'テスト備考',
-        ];
+  /**
+   * 出勤時間が退勤時間より後になっている場合、エラーメッセージが表示される
+   *
+   * 「出勤時間もしくは退勤時間が不適切な値です」
+   */
+  public function test_error_when_clock_in_is_after_clock_out_for_admin(): void
+  {
+    $data = [
+      'clock_in'     => '18:00',
+      'clock_out'    => '09:00',
+      'breakRecords' => [],
+      'remarks'      => 'テスト備考',
+    ];
 
-        $validator = $this->makeAttendanceDetailValidator($data);
+    $validator = $this->makeAttendanceDetailValidator($data);
 
-        $this->assertTrue($validator->fails());
+    $this->assertTrue($validator->fails());
 
-        $this->assertContains(
-            '出勤時間もしくは退勤時間が不適切な値です',
-            $validator->errors()->get('clock_in')
-        );
-    }
+    $this->assertContains(
+      '出勤時間もしくは退勤時間が不適切な値です',
+      $validator->errors()->get('clock_in')
+    );
+  }
 
-    /**
-     * 休憩開始時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     *
-     * 「休憩時間が不適切な値です」
-     */
-    public function test_error_when_break_start_is_after_clock_out_for_admin(): void
-    {
-        $data = [
-            'clock_in'  => '09:00',
-            'clock_out' => '18:00',
-            'breakRecords' => [
-                [
-                    'start'    => '19:00',   // 退勤より後
-                    'end'      => '19:30',
-                    'required' => true,
-                ],
-            ],
-            'remarks'   => 'テスト備考',
-        ];
+  /**
+   * 休憩開始時間が退勤時間より後になっている場合、エラーメッセージが表示される
+   *
+   * 「休憩時間が不適切な値です」
+   */
+  public function test_error_when_break_start_is_after_clock_out_for_admin(): void
+  {
+    $data = [
+      'clock_in'     => '09:00',
+      'clock_out'    => '18:00',
+      'breakRecords' => [
+        [
+          'start'    => '19:00',   // 退勤より後
+          'end'      => '19:30',
+          'required' => true,
+        ],
+      ],
+      'remarks' => 'テスト備考',
+    ];
 
-        $validator = $this->makeAttendanceDetailValidator($data);
+    $validator = $this->makeAttendanceDetailValidator($data);
 
-        $this->assertTrue($validator->fails());
+    $this->assertTrue($validator->fails());
 
-        $this->assertContains(
-            '休憩時間が不適切な値です',
-            $validator->errors()->get('breakRecords.0.start')
-        );
-    }
+    $this->assertContains(
+      '休憩時間が不適切な値です',
+      $validator->errors()->get('breakRecords.0.start')
+    );
+  }
 
-    /**
-     * 休憩終了時間が退勤時間より後になっている場合、エラーメッセージが表示される
-     *
-     * 「休憩時間もしくは退勤時間が不適切な値です」
-     */
-    public function test_error_when_break_end_is_after_clock_out_for_admin(): void
-    {
-        $data = [
-            'clock_in'  => '09:00',
-            'clock_out' => '18:00',
-            'breakRecords' => [
-                [
-                    'start'    => '10:00',
-                    'end'      => '19:00', // 退勤より後
-                    'required' => true,
-                ],
-            ],
-            'remarks'   => 'テスト備考',
-        ];
+  /**
+   * 休憩終了時間が退勤時間より後になっている場合、エラーメッセージが表示される
+   *
+   * 「休憩時間もしくは退勤時間が不適切な値です」
+   */
+  public function test_error_when_break_end_is_after_clock_out_for_admin(): void
+  {
+    $data = [
+      'clock_in'     => '09:00',
+      'clock_out'    => '18:00',
+      'breakRecords' => [
+        [
+          'start'    => '10:00',
+          'end'      => '19:00', // 退勤より後
+          'required' => true,
+        ],
+      ],
+      'remarks' => 'テスト備考',
+    ];
 
-        $validator = $this->makeAttendanceDetailValidator($data);
+    $validator = $this->makeAttendanceDetailValidator($data);
 
-        $this->assertTrue($validator->fails());
+    $this->assertTrue($validator->fails());
 
-        $this->assertContains(
-            '休憩時間もしくは退勤時間が不適切な値です',
-            $validator->errors()->get('breakRecords.0.end')
-        );
-    }
+    $this->assertContains(
+      '休憩時間もしくは退勤時間が不適切な値です',
+      $validator->errors()->get('breakRecords.0.end')
+    );
+  }
 
-    /**
-     * 備考欄が未入力の場合のエラーメッセージが表示される
-     *
-     * 「備考を記入してください」
-     */
-    public function test_error_when_remarks_is_empty_for_admin(): void
-    {
-        $data = [
-            'clock_in'  => '09:00',
-            'clock_out' => '18:00',
-            'breakRecords' => [],
-            'remarks'   => '',
-        ];
+  /**
+   * 備考欄が未入力の場合のエラーメッセージが表示される
+   *
+   * 「備考を記入してください」
+   */
+  public function test_error_when_remarks_is_empty_for_admin(): void
+  {
+    $data = [
+      'clock_in'     => '09:00',
+      'clock_out'    => '18:00',
+      'breakRecords' => [],
+      'remarks'      => '',
+    ];
 
-        $validator = $this->makeAttendanceDetailValidator($data);
+    $validator = $this->makeAttendanceDetailValidator($data);
 
-        $this->assertTrue($validator->fails());
+    $this->assertTrue($validator->fails());
 
-        $this->assertContains(
-            '備考を記入してください',
-            $validator->errors()->get('remarks')
-        );
-    }
+    $this->assertContains(
+      '備考を記入してください',
+      $validator->errors()->get('remarks')
+    );
+  }
 }

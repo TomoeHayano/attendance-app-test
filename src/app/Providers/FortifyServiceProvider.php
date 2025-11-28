@@ -7,15 +7,15 @@ use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
 {
-     public function register(): void
-    {
-        //
-    }
+  public function register(): void
+  {
+    //
+  }
 
-    public function boot(): void
-    {
-        Fortify::loginView(function () {
-            return view('auth.login');
-        });
-    }
+  public function boot(): void
+  {
+    Fortify::loginView(function () {
+      return view('auth.login');
+    });
+  }
 }

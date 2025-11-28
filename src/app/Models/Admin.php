@@ -16,25 +16,25 @@ use Illuminate\Notifications\Notifiable;
  */
 class Admin extends Authenticatable
 {
-    use Notifiable;
+  use Notifiable;
 
-    /** @var string */
-    protected $table = 'admins';
+  /** @var string */
+  protected $table = 'admins';
 
-    /**
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+  /**
+   * @var list<string>
+   */
+  protected $fillable = [
+    'name',
+    'email',
+    'password',
+  ];
 
-    /**
-     * @var array<string, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  /**
+   * @var array<string, string>
+   */
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
 }
