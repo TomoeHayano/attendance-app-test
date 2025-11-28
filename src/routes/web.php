@@ -47,7 +47,7 @@ Route::middleware(['guest:web'])->group(function (): void {
 
 Route::middleware(['auth:web', 'verified'])->group(function (): void {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::get('/attendance/action', [AttendanceController::class, 'index'])->name('attendance.action');
+    Route::match(['get', 'post'], '/attendance/action', [AttendanceController::class, 'index'])->name('attendance.action');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clockIn');
     Route::post('/attendance/break-start', [AttendanceController::class, 'breakStart'])->name('attendance.breakStart');
     Route::post('/attendance/break-end', [AttendanceController::class, 'breakEnd'])->name('attendance.breakEnd');
@@ -97,8 +97,6 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
         Route::get('/attendance/list', [AdminAttendanceController::class, 'daily'])
             ->name('attendance.daily');
     });
-    Route::get('/attendance/detail/{attendance}', [AttendanceDetailController::class, 'show'])
-            ->name('attendance.detail');
 });
 
 Route::prefix('admin')
