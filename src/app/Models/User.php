@@ -18,23 +18,23 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
-  use Notifiable;
+    use Notifiable;
 
-  /** @var array<string> */
-  protected $fillable = [
-    'name',
-    'email',
-    'password',
-  ];
+    /** @var array<string> */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-  /** @var array<string> */
-  protected $hidden = [
-    'password',
-    'remember_token',
-  ];
+    /** @var array<string> */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-  /** @var array<string, string> */
-  protected $casts = [
-    'email_verified_at' => 'datetime',
-  ];
+    /** @var array<string, string> */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
 }

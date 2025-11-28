@@ -8,31 +8,31 @@ use Illuminate\Http\Request;
 
 class RequestListController extends Controller
 {
-  public function index(Request $request): View
-  {
-    $user = $request->user();
+    public function index(Request $request): View
+    {
+        $user = $request->user();
 
-    $activeTab = $request->query('tab', 'pending');
+        $activeTab = $request->query('tab', 'pending');
 
-    $pendingRequests = CorrectionRequest::with(['attendance', 'user'])
-        ->where('user_id', $user->id)
-        ->where('status', CorrectionRequest::STATUS_PENDING)
-        ->orderByDesc('created_at')
-        ->get();
+        $pendingRequests = CorrectionRequest::with(['attendance', 'user'])
+            ->where('user_id', $user->id)
+            ->where('status', CorrectionRequest::STATUS_PENDING)
+            ->orderByDesc('created_at')
+            ->get();
 
-    $approvedRequests = CorrectionRequest::with(['attendance', 'user'])
-        ->where('user_id', $user->id)
-        ->where('status', CorrectionRequest::STATUS_APPROVED)
-        ->orderByDesc('created_at')
-        ->get();
+        $approvedRequests = CorrectionRequest::with(['attendance', 'user'])
+            ->where('user_id', $user->id)
+            ->where('status', CorrectionRequest::STATUS_APPROVED)
+            ->orderByDesc('created_at')
+            ->get();
 
-    $displayRequests = $activeTab === 'approved'
-        ? $approvedRequests
-        : $pendingRequests;
+        $displayRequests = $activeTab === 'approved'
+            ? $approvedRequests
+            : $pendingRequests;
 
-    return view('attendance.request-list', [
-      'activeTab'       => $activeTab,
-      'displayRequests' => $displayRequests,
-    ]);
-  }
+        return view('attendance.request-list', [
+            'activeTab'       => $activeTab,
+            'displayRequests' => $displayRequests,
+        ]);
+    }
 }

@@ -5,7 +5,7 @@ use Laravel\Fortify\Features;
 
 return [
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Fortify Guard
     |--------------------------------------------------------------------------
@@ -16,9 +16,9 @@ return [
     |
     */
 
-  'guard' => 'web',
+    'guard' => 'web',
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Fortify Password Broker
     |--------------------------------------------------------------------------
@@ -29,9 +29,9 @@ return [
     |
     */
 
-  'passwords' => 'users',
+    'passwords' => 'users',
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Username / Email
     |--------------------------------------------------------------------------
@@ -46,11 +46,11 @@ return [
     |
     */
 
-  'username' => 'email',
+    'username' => 'email',
 
-  'email' => 'email',
+    'email' => 'email',
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Lowercase Usernames
     |--------------------------------------------------------------------------
@@ -61,9 +61,9 @@ return [
     |
     */
 
-  'lowercase_usernames' => true,
+    'lowercase_usernames' => true,
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Home Path
     |--------------------------------------------------------------------------
@@ -74,9 +74,9 @@ return [
     |
     */
 
-  'home' => RouteServiceProvider::HOME,
+    'home' => RouteServiceProvider::HOME,
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Fortify Routes Prefix / Subdomain
     |--------------------------------------------------------------------------
@@ -87,11 +87,11 @@ return [
     |
     */
 
-  'prefix' => '',
+    'prefix' => '',
 
-  'domain' => null,
+    'domain' => null,
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Fortify Routes Middleware
     |--------------------------------------------------------------------------
@@ -102,9 +102,9 @@ return [
     |
     */
 
-  'middleware' => ['web'],
+    'middleware' => ['web'],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Rate Limiting
     |--------------------------------------------------------------------------
@@ -115,12 +115,12 @@ return [
     |
     */
 
-  'limiters' => [
-    'login'      => 'login',
-    'two-factor' => 'two-factor',
-  ],
+    'limiters' => [
+        'login'      => 'login',
+        'two-factor' => 'two-factor',
+    ],
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Register View Routes
     |--------------------------------------------------------------------------
@@ -131,9 +131,9 @@ return [
     |
     */
 
-  'views' => true,
+    'views' => true,
 
-  /*
+    /*
     |--------------------------------------------------------------------------
     | Features
     |--------------------------------------------------------------------------
@@ -144,19 +144,19 @@ return [
     |
     */
 
-  'features' => [
-    Features::registration(),
-    Features::resetPasswords(),
-    Features::emailVerification(),
-    Features::updateProfileInformation(),
-    Features::updatePasswords(),
-    Features::twoFactorAuthentication([
-      'confirm'         => true,
-      'confirmPassword' => true,
-      // 'window' => 0,
-    ]),
+    'features' => [
+        Features::registration(),
+        Features::resetPasswords(),
+        Features::emailVerification(),
+        Features::updateProfileInformation(),
+        Features::updatePasswords(),
+        Features::twoFactorAuthentication([
+            'confirm'         => true,
+            'confirmPassword' => true,
+            // 'window' => 0,
+        ]),
 
-    Laravel\Fortify\Features::registration(),
-    Laravel\Fortify\Features::resetPasswords(),
-  ],
+        Laravel\Fortify\Features::registration(),
+        Laravel\Fortify\Features::resetPasswords(),
+    ],
 ];

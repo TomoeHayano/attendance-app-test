@@ -16,17 +16,17 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CorrectionBreak extends Model
 {
-  protected $table = 'correction_breaks';
+    protected $table = 'correction_breaks';
 
-  /** @var array<string> */
-  protected $fillable = [
-    'correction_request_id',
-    'corrected_break_start',
-    'corrected_break_end',
-  ];
+    /** @var array<string> */
+    protected $fillable = [
+        'correction_request_id',
+        'corrected_break_start',
+        'corrected_break_end',
+    ];
 
-  public function correctionRequest()
-  {
-    return $this->belongsTo(CorrectionRequest::class, 'correction_request_id');
-  }
+    public function correctionRequest()
+    {
+        return $this->belongsTo(CorrectionRequest::class, 'correction_request_id');
+    }
 }

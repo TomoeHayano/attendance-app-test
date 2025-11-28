@@ -17,17 +17,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class BreakRecord extends Model
 {
-  protected $table = 'break_records';
+    protected $table = 'break_records';
 
-  /** @var array<int, string> */
-  protected $fillable = [
-    'attendance_id',
-    'break_start',
-    'break_end',
-  ];
+    /** @var array<int, string> */
+    protected $fillable = [
+        'attendance_id',
+        'break_start',
+        'break_end',
+    ];
 
-  public function attendance(): BelongsTo
-  {
-    return $this->belongsTo(Attendance::class);
-  }
+    public function attendance(): BelongsTo
+    {
+        return $this->belongsTo(Attendance::class);
+    }
 }

@@ -10,48 +10,48 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-  /**
-   * ログインフォーム表示
-   * @return View
-   */
-  public function create(): View
-  {
-    return view('admin.login');
-  }
-
-  /**
-   * ログイン処理
-   * @param LoginRequest $request
-   * @return RedirectResponse
-   */
-  public function store(LoginRequest $request): RedirectResponse
-  {
-    $credentials = $request->only('email', 'password');
-
-    if (! Auth::guard('admin')->attempt($credentials)) {
-      return back()
-          ->withErrors(['email' => 'ログイン情報が登録されていません'])
-          ->withInput($request->only('email'));
+    /**
+     * ログインフォーム表示
+     * @return View
+     */
+    public function create(): View
+    {
+        return view('admin.login');
     }
 
-    $request->session()->regenerate();
+    /**
+     * ログイン処理
+     * @param LoginRequest $request
+     * @return RedirectResponse
+     */
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $credentials = $request->only('email', 'password');
 
-    return redirect()->route('admin.attendance.daily');
-  }
+        if (! Auth::guard('admin')->attempt($credentials)) {
+            return back()
+                ->withErrors(['email' => 'ログイン情報が登録されていません'])
+                ->withInput($request->only('email'));
+        }
 
-  /**
-   * ログアウト
-   * @return RedirectResponse
-   */
-  public function destroy(): RedirectResponse
-  {
-    if (Auth::guard('admin')->check()) {
-      Auth::guard('admin')->logout();
+        $request->session()->regenerate();
+
+        return redirect()->route('admin.attendance.daily');
     }
 
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+    /**
+     * ログアウト
+     * @return RedirectResponse
+     */
+    public function destroy(): RedirectResponse
+    {
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
 
-    return redirect()->route('admin.login');
-  }
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('admin.login');
+    }
 }

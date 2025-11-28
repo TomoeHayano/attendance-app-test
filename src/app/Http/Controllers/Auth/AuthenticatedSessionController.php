@@ -10,49 +10,49 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthenticatedSessionController extends Controller
 {
-  /**
-   * ログインフォーム表示
-   * @return View
-   */
-  public function create(): View
-  {
-    return view('attendance.login');
-  }
-
-  /**
-   * @param LoginRequest $request
-   * @return RedirectResponse
-   */
-  public function store(LoginRequest $request): RedirectResponse
-  {
-    $credentials = $request->only('email', 'password');
-    $remember    = (bool) $request->boolean('remember');
-
-    if (! Auth::guard('web')->attempt($credentials, $remember)) {
-      // 仕様：入力情報が誤っている場合の共通エラー
-      return back()
-          ->withErrors(['email' => 'ログイン情報が登録されていません'])
-          ->withInput($request->only('email'));
+    /**
+     * ログインフォーム表示
+     * @return View
+     */
+    public function create(): View
+    {
+        return view('attendance.login');
     }
 
-    $request->session()->regenerate();
+    /**
+     * @param LoginRequest $request
+     * @return RedirectResponse
+     */
+    public function store(LoginRequest $request): RedirectResponse
+    {
+        $credentials = $request->only('email', 'password');
+        $remember    = (bool) $request->boolean('remember');
 
-    return redirect()->intended(route('attendance.index'));
-  }
+        if (! Auth::guard('web')->attempt($credentials, $remember)) {
+            // 仕様：入力情報が誤っている場合の共通エラー
+            return back()
+                ->withErrors(['email' => 'ログイン情報が登録されていません'])
+                ->withInput($request->only('email'));
+        }
 
-  /**
-   * ログアウト
-   * @return RedirectResponse
-   */
-  public function destroy(): RedirectResponse
-  {
-    if (Auth::guard('web')->check()) {
-      Auth::guard('web')->logout();
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('attendance.index'));
     }
 
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
+    /**
+     * ログアウト
+     * @return RedirectResponse
+     */
+    public function destroy(): RedirectResponse
+    {
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+        }
 
-    return redirect()->route('login');
-  }
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('login');
+    }
 }
