@@ -113,12 +113,14 @@
                                         {{ $attendance->work_time_formatted }}
                                     </td>
                                     <td class="admin-attendance-table__cell admin-attendance-table__cell--detail">
-                                        <a
-                                            href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}"
-                                            class="admin-attendance-table__detail-link"
-                                        >
-                                            詳細
-                                        </a>
+                                        @if ($attendance->can_view_detail)
+                                            <a
+                                                href="{{ route('admin.attendance.detail', ['id' => $attendance->id]) }}"
+                                                class="admin-attendance-table__detail-link"
+                                            >
+                                                詳細
+                                            </a>
+                                        @endif
                                     </td>
                                 </tr>
                             @empty

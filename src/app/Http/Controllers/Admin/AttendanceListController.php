@@ -63,10 +63,13 @@ class AttendanceListController extends Controller
         );
 
         $attendanceRows = collect();
+        $today          = Carbon::today();
 
         foreach ($monthPeriod as $date) {
             $key        = $date->toDateString();
             $attendance = $attendances->get($key);
+            $hasRecord  = $attendance !== null
+                && ($attendance->clock_in !== null || $attendance->clock_out !== null);
 
             // レコードが無い日でも詳細画面へ遷移できるよう、プレースホルダを作成
             if (! $attendance) {
@@ -97,6 +100,7 @@ class AttendanceListController extends Controller
                 'break_time'   => $attendance ? $this->formatMinutes($breakMinutes) : '',
                 'working_time' => $attendance ? $this->formatMinutes($workingMinutes) : '',
                 'detail_id'    => $attendance->id,
+                'can_view_detail' => ! $date->gt($today) || $hasRecord,
             ]);
         }
 

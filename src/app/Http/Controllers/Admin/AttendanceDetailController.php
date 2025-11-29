@@ -83,14 +83,13 @@ class AttendanceDetailController extends Controller
         }
 
         DB::transaction(function () use ($attendance, $request): void {
-            // 管理者は attendances を直接更新
+
             $attendance->update([
                 'clock_in'  => $request->input('clock_in'),
                 'clock_out' => $request->input('clock_out'),
                 'remarks'   => $request->input('remarks'),
             ]);
 
-            // 休憩は一旦全削除してから再登録
             $attendance->breakRecords()->delete();
 
             foreach ($request->input('breakRecords', []) as $break) {

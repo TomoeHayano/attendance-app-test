@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $remember    = (bool) $request->boolean('remember');
 
         if (! Auth::guard('web')->attempt($credentials, $remember)) {
-            // 仕様：入力情報が誤っている場合の共通エラー
+
             return back()
                 ->withErrors(['email' => 'ログイン情報が登録されていません'])
                 ->withInput($request->only('email'));

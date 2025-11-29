@@ -58,10 +58,13 @@ class AttendanceListController extends Controller
         );
 
         $attendanceRows = collect();
+        $today          = Carbon::today();
 
         foreach ($monthPeriod as $date) {
             $key        = $date->toDateString();
             $attendance = $attendances->get($key);
+            $hasRecord  = $attendance !== null
+                && ($attendance->clock_in !== null || $attendance->clock_out !== null);
 
             $clockInCarbon  = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_in)) : null;
             $clockOutCarbon = $attendance ? $this->normalizeToMinute($this->parseTime($attendance->clock_out)) : null;
@@ -77,6 +80,7 @@ class AttendanceListController extends Controller
                 'break_time'   => $attendance ? $this->formatMinutes($breakMinutes) : '',
                 'working_time' => $attendance ? $this->formatMinutes($workingMinutes) : '',
                 'detail_id'    => $attendance?->id ?? $key,
+                'can_view_detail' => ! $date->gt($today) || $hasRecord,
             ]);
         }
 

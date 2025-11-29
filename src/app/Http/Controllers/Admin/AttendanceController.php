@@ -20,6 +20,8 @@ class AttendanceController extends Controller
             ? Carbon::parse($rawDate)
             : Carbon::today();
 
+        $isFutureDate = $targetDate->gt(Carbon::today());
+
         /** @var Collection<int, Attendance> $attendances */
         $attendances = Attendance::with(['user', 'breakRecords'])
             ->whereDate('date', $targetDate->toDateString())
@@ -30,7 +32,7 @@ class AttendanceController extends Controller
                  * @param Attendance $attendance
                  * @return Attendance
                  */
-                function (Attendance $attendance): Attendance {
+                function (Attendance $attendance) use ($isFutureDate): Attendance {
                     $clockIn  = $this->normalizeToMinute($this->parseTime($attendance->clock_in));
                     $clockOut = $this->normalizeToMinute($this->parseTime($attendance->clock_out));
 
@@ -53,6 +55,9 @@ class AttendanceController extends Controller
                     $attendance->work_time_formatted  = $workMinutes !== null
                         ? $this->formatMinutes($workMinutes)
                         : '';
+                    $attendance->can_view_detail      = ! $isFutureDate
+                        || $attendance->clock_in !== null
+                        || $attendance->clock_out !== null;
 
                     return $attendance;
                 }
@@ -66,6 +71,7 @@ class AttendanceController extends Controller
         return view('admin.daily', [
             'targetDate'  => $targetDate,
             'attendances' => $attendances,
+            'isFutureDate' => $isFutureDate,
         ]);
     }
 

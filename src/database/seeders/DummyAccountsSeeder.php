@@ -24,6 +24,7 @@ class DummyAccountsSeeder extends Seeder
             [
                 'name'     => '一般花子',
                 'password' => Hash::make('123456789'),
+                'email_verified_at' => now(),
             ]
         );
     }

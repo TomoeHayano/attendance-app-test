@@ -40,7 +40,6 @@ class RequestApproveController extends Controller
                 'correctionBreaks',
             ])->lockForUpdate()->findOrFail($correction_request_id);
 
-            // ▼ 正しい「承認待ち」チェック（1でなければ何もしない）
             if ($correctionRequest->status !== CorrectionRequest::STATUS_PENDING) {
                 return;
             }

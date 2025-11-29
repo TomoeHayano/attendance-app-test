@@ -199,6 +199,10 @@
     letter-spacing: 0.15em;
     color: #000000;
 }
+.attendance-table__detail-text--disabled {
+    color: #C2C2C2;
+    cursor: default;
+}
 
 /* 空データ時 */
 .attendance-table__cell--empty {

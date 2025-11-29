@@ -95,12 +95,14 @@
                                     {{ $row['working_time'] }}
                                 </td>
                                 <td class="attendance-table__cell attendance-table__cell--detail">
-                                    <a
-                                        href="{{ route('admin.attendance.detail', ['id' => $row['detail_id']]) }}"
-                                        class="attendance-table__detail-link"
-                                    >
-                                        <span class="attendance-table__detail-text">詳細</span>
-                                    </a>
+                                    @if ($row['can_view_detail'])
+                                        <a
+                                            href="{{ route('admin.attendance.detail', ['id' => $row['detail_id']]) }}"
+                                            class="attendance-table__detail-link"
+                                        >
+                                            <span class="attendance-table__detail-text">詳細</span>
+                                        </a>
+                                    @endif
                                 </td>
                             </tr>
                         @empty

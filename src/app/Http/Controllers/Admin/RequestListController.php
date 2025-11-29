@@ -21,7 +21,6 @@ class RequestListController extends Controller
         /** @var string $activeTab */
         $activeTab = $request->query('tab', 'pending');
 
-        // 全ユーザー対象なので user_id では絞り込まないことがポイント
         $pendingRequests = CorrectionRequest::with(['attendance', 'user'])
             ->where('status', CorrectionRequest::STATUS_PENDING)
             ->orderByDesc('created_at')

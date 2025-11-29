@@ -43,7 +43,7 @@
 - nginx:1.21.1
 - mysql:8.0.26
 - docker:3.8
-- php:8.1
+- php:8.2
 
 ## ER図
 ![attendance-app ER図](/er.png)
@@ -136,15 +136,16 @@
 | created_at | timestamp |  |  |  |  |
 | updated_at | timestamp |  |  |  |  |
 
-## 環境変数
-- .envとenv.testingに<br>
-STRIPE_KEY・STRIPE_SECRET　は未設定のため、KEYの取得をお願いいたします。
+## 管理者情報
+メールアドレス:admin@example.com<br>
+名前:管理者太郎<br>
+パスワード:'123456789'<br>
 
 ## 仕様書未記入機能-鈴木北斗コーチ指示のもと作成しています
 - 一般ユーザー未打刻時に勤怠詳細画面で打刻入力できてよいとお聞きしています。
 - Figmaにメール認証画面がないためメール認証誘導画面と同一でよいとお聞きしています。
 
-## Unitテスト実行方法
+## テスト実行方法
 - このプロジェクトでは、LaravelのFeatureテストを一部実装しています。<br>
 テスト実行環境はDockerコンテナ内で完結します。
 
@@ -152,7 +153,6 @@ STRIPE_KEY・STRIPE_SECRET　は未設定のため、KEYの取得をお願いい
 - docker compose exec mysql mysql -u root -p<br>
 ※ パスワード: root
 - CREATE DATABASE demo_test;
-- exit
 - exit
 - docker-compose exec php bash
 - php artisan key:generate --env=testing
