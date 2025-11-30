@@ -9,7 +9,7 @@
 <body class="@yield('body_class', '')">
 <header class="global-header">
     <div class="header-inner">
-        <img src="{{ asset('storage/images/coachtech_white.png') }}" alt="COACHTECH" class="header-logo">
+        <img src="{{ asset('images/coachtech_white.png') }}" alt="COACHTECH" class="header-logo">
         @php
             $navLinks = [];
             $currentRouteName = optional(request()->route())->getName();

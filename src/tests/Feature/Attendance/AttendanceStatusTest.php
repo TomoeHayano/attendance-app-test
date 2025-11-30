@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Attendance;
+namespace Tests\Feature\Attendance;
 
 use App\Models\Attendance;
 use App\Models\User;
