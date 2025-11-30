@@ -137,6 +137,7 @@
 | updated_at | timestamp |  |  |  |  |
 
 ## 管理者情報
+ログインURL:http://admin/login<br>
 メールアドレス:admin@example.com<br>
 名前:管理者太郎<br>
 パスワード:'123456789'<br>
