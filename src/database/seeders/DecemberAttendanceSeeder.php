@@ -10,7 +10,7 @@ use Illuminate\Database\Seeder;
 class DecemberAttendanceSeeder extends Seeder
 {
     /**
-     * 12月の平日(月〜金)だけ
+     * 11月の平日(月〜金)だけ
      * 09:00〜18:00（休憩 12:00〜13:00）の勤怠を登録する
      */
     public function run(): void
@@ -18,7 +18,7 @@ class DecemberAttendanceSeeder extends Seeder
 
         $userId = 1;
         $year   = 2025;
-        $month  = 12;
+        $month  = 11;
 
         $startDate = Carbon::create($year, $month, 1)->startOfDay();
         $endDate   = (clone $startDate)->endOfMonth();
